@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oripalot — Registration</title>
+  <link rel="stylesheet" href="../assets/style.css"/>
+  <style>
+    .auth-logo {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+    .auth-logo .brand {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      letter-spacing: 1px;
+    }
+    .auth-logo .tagline {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .otp-grid {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    .otp-grid input {
+      width: 48px !important;
+      height: 56px;
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      padding: 0 !important;
+    }
+    .age-warning {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 0.82rem;
+      color: var(--danger);
+      margin-top: 8px;
+      display: none;
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: var(--bg-input);
+      border-radius: var(--radius);
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+      font-family: var(--font);
+    }
+    .tab.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .phone-row {
+      display: flex;
+      gap: 8px;
+    }
+    .phone-row select {
+      width: 110px;
+      flex-shrink: 0;
+    }
+    .phone-row input { flex: 1; }
+    .checkbox-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .checkbox-row input[type=checkbox] {
+      width: 18px; height: 18px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+    }
+    .checkbox-row label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .checkbox-row label a { color: var(--accent); text-decoration: none; }
+    .resend-timer {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-align: center;
+      margin-top: 12px;
+    }
+    .resend-timer span { color: var(--accent); cursor: pointer; }
+    .success-screen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      background: rgba(16,185,129,0.15);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <div class="auth-logo">
+    <div class="brand">🎴 Oripalot</div>
+    <div class="tagline">Japan's premium oripa experience</div>
+  </div>
+
+  <!-- Step Indicator -->
+  <div class="steps" id="steps">
+    <div class="step active" id="step1">
+      <div class="step-dot">1</div>
+      <div class="step-label">Account</div>
+    </div>
+    <div class="step" id="step2">
+      <div class="step-dot">2</div>
+      <div class="step-label">Birthday</div>
+    </div>
+    <div class="step" id="step3">
+      <div class="step-dot">3</div>
+      <div class="step-label">Phone</div>
+    </div>
+    <div class="step" id="step4">
+      <div class="step-dot">4</div>
+      <div class="step-label">Done</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: Account creation -->
+  <div class="screen active" id="screen-account">
+    <div class="section-header">
+      <h1>Create your account</h1>
+      <p class="mt-8">Sign up to start playing Oripa draws</p>
+    </div>
+
+    <!-- SSO Buttons -->
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+      <button class="btn btn-social" onclick="showToast('Google sign-up — coming soon', 'info')">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Continue with Google
+      </button>
+      <button class="btn btn-social" onclick="showToast('Apple sign-up — coming soon', 'info')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Continue with Apple
+      </button>
+      <button class="btn btn-social" onclick="showToast('LINE sign-up — coming soon', 'info')" style="border-color:#06C755;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#06C755"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+        Continue with LINE
+      </button>
+    </div>
+
+    <div class="divider">or sign up with email</div>
+
+    <div class="form-group">
+      <label>Email address</label>
+      <input type="email" placeholder="you@example.com" id="email"/>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" placeholder="Min. 8 characters" id="password"/>
+      <span class="hint">Must include a number and special character</span>
+    </div>
+    <div class="form-group">
+      <label>Confirm Password</label>
+      <input type="password" placeholder="Re-enter password" id="confirm-password"/>
+    </div>
+
+    <button class="btn btn-primary" onclick="goToStep('birthday')">Continue →</button>
+
+    <p class="text-center mt-16" style="font-size:0.85rem;">
+      Already have an account? <a href="#" style="color:var(--accent);">Log in</a>
+    </p>
+  </div>
+
+  <!-- SCREEN 2: Birthday -->
+  <div class="screen" id="screen-birthday">
+    <div class="section-header">
+      <h1>Your date of birth</h1>
+      <p class="mt-8">Required for age verification and purchase limits</p>
+    </div>
+
+    <div class="form-group">
+      <label>Date of Birth</label>
+      <input type="date" id="dob" onchange="checkAge(this.value)"/>
+    </div>
+
+    <div class="age-warning" id="age-warning-under16">
+      ⚠️ Users under 16 have a monthly purchase limit of ¥5,000.
+    </div>
+    <div class="age-warning" id="age-warning-under18" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:var(--warning);">
+      ⚠️ Users aged 16–17 have a monthly purchase limit of ¥20,000. Payment limited to Google Pay and Apple Pay only.
+    </div>
+
+    <div class="card mt-16" style="font-size:0.82rem; color:var(--text-muted); line-height:1.7;">
+      <strong style="color:var(--text);">Why we ask</strong><br/>
+      Japanese regulations require us to verify your age. Users under 18 have special purchase limits and KYC requirements.
+    </div>
+
+    <div class="checkbox-row mt-16">
+      <input type="checkbox" id="terms"/>
+      <label for="terms">I agree to the <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>, and <a href="#">Responsible Play</a> policy.</label>
+    </div>
+
+    <button class="btn btn-primary" onclick="goToStep('phone')">Continue →</button>
+    <button class="btn btn-ghost mt-8 w-full text-center" onclick="goToStep('account')">← Back</button>
+  </div>
+
+  <!-- SCREEN 3: Phone verification -->
+  <div class="screen" id="screen-phone">
+    <div class="section-header">
+      <h1>Verify your phone</h1>
+      <p class="mt-8">Helps prevent duplicate accounts and secures your account</p>
+    </div>
+
+    <div id="phone-entry">
+      <div class="form-group">
+        <label>Mobile phone number</label>
+        <div class="phone-row">
+          <select>
+            <option value="+81">🇯🇵 +81</option>
+            <option value="+1">🇺🇸 +1</option>
+            <option value="+44">🇬🇧 +44</option>
+            <option value="+61">🇦🇺 +61</option>
+            <option value="+65">🇸🇬 +65</option>
+          </select>
+          <input type="tel" placeholder="090-1234-5678" id="phone"/>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="sendOTP()">Send verification code</button>
+    </div>
+
+    <div id="otp-entry" style="display:none;">
+      <div class="alert alert-info">
+        📱 A 6-digit code has been sent to your phone
+      </div>
+      <div class="form-group">
+        <label>Enter verification code</label>
+        <div class="otp-grid" id="otp-grid">
+          <input type="number" maxlength="1" min="0" max="9"/>
+          <input type="number" maxlength="1" min="0" max="9"/>
+          <input type="number" maxlength="1" min="0" max="9"/>
+          <input type="number" maxlength="1" min="0" max="9"/>
+          <input type="number" maxlength="1" min="0" max="9"/>
+          <input type="number" maxlength="1" min="0" max="9"/>
+        </div>
+      </div>
+      <div class="resend-timer">Didn't receive it? <span onclick="showToast('Code resent!', 'success')">Resend code</span> (available in 30s)</div>
+      <button class="btn btn-primary mt-16" onclick="verifyOTP()">Verify →</button>
+    </div>
+
+    <button class="btn btn-ghost mt-8 w-full text-center" onclick="goToStep('birthday')">← Back</button>
+  </div>
+
+  <!-- SCREEN 4: Success -->
+  <div class="screen" id="screen-done">
+    <div class="success-screen">
+      <div class="success-icon">✅</div>
+      <h1>Welcome to Oripalot!</h1>
+      <p class="mt-8">Your account has been created successfully.</p>
+
+      <div class="card mt-24" style="text-align:left;">
+        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">🎁 Welcome bonus</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span>Free Coins (registration bonus)</span>
+          <span class="text-green">+500 💚</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Phone verification bonus</span>
+          <span class="text-green">+100 💚</span>
+        </div>
+      </div>
+
+      <div class="alert alert-info mt-16" style="text-align:left;">
+        💬 Register your LINE account to receive an extra bonus and exclusive deals!
+      </div>
+
+      <button class="btn btn-gold mt-16" onclick="window.location.href='../index.html'">Start playing →</button>
+      <button class="btn btn-outline mt-8" onclick="window.location.href='line-integration.html'">Register LINE account</button>
+    </div>
+  </div>
+
+</div><!-- end .page -->
+
+<script src="../assets/nav.js"></script>
+<script>
+  // No top/bottom nav on auth screens — cleaner UX
+  // but keep toast utility
+
+  function goToStep(step) {
+    const screens = ['account','birthday','phone','done'];
+    const stepMap = { account:0, birthday:1, phone:2, done:3 };
+    const idx = stepMap[step];
+
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + step).classList.add('active');
+
+    document.querySelectorAll('.step').forEach((s, i) => {
+      s.classList.remove('active','done');
+      if (i < idx) s.classList.add('done');
+      if (i === idx) s.classList.add('active');
+    });
+
+    window.scrollTo(0,0);
+  }
+
+  function checkAge(dateStr) {
+    if (!dateStr) return;
+    const dob = new Date(dateStr);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+    document.getElementById('age-warning-under16').style.display = age < 16 ? 'block' : 'none';
+    document.getElementById('age-warning-under18').style.display = (age >= 16 && age < 18) ? 'block' : 'none';
+  }
+
+  function sendOTP() {
+    const phone = document.getElementById('phone').value;
+    if (!phone) { showToast('Please enter your phone number', 'danger'); return; }
+    document.getElementById('phone-entry').style.display = 'none';
+    document.getElementById('otp-entry').style.display = 'block';
+    showToast('Verification code sent!', 'success');
+    setupOTPInputs('#otp-grid');
+  }
+
+  function verifyOTP() {
+    // Simulate verification — any 6-digit code works in prototype
+    const inputs = document.querySelectorAll('#otp-grid input');
+    const code = Array.from(inputs).map(i => i.value).join('');
+    if (code.length < 6) { showToast('Please enter the full 6-digit code', 'danger'); return; }
+    showToast('Phone verified!', 'success');
+    setTimeout(() => goToStep('done'), 800);
+  }
+</script>
+</body>
+</html>

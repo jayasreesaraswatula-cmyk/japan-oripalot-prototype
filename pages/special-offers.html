@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Special Offers — Oripalot</title>
+  <link rel="stylesheet" href="../assets/style.css" />
+  <style>
+    /* ---- Hero Banner ---- */
+    .hero-banner {
+      background: linear-gradient(135deg, #1a0a3e 0%, #2d1b69 50%, #1a1a2e 100%);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(124,58,237,0.3) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-banner h1 {
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+    }
+    .hero-banner p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .countdown-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      align-items: center;
+    }
+    .countdown-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .countdown-num {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+      min-width: 46px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+    .countdown-label {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .countdown-sep {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--accent);
+      padding-bottom: 14px;
+    }
+
+    /* ---- Offer Cards ---- */
+    .offer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .offer-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .offer-card.featured {
+      border-color: var(--accent-gold);
+    }
+    .offer-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-gold));
+    }
+    .offer-card.featured::before {
+      background: linear-gradient(90deg, var(--accent-gold), #fbbf24);
+    }
+    .offer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .offer-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .offer-name small {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 3px;
+    }
+    .discount-badge {
+      background: linear-gradient(135deg, var(--accent-gold), #fbbf24);
+      color: #000;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .coin-deal {
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .coin-deal-left {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .coin-deal-left span {
+      display: block;
+      text-decoration: line-through;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .coin-deal-right {
+      text-align: right;
+    }
+    .coin-deal-right .get-coins {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--accent-gold);
+    }
+    .coin-deal-right small {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--success);
+    }
+    .offer-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .offer-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .offer-meta-item .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .offer-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .offer-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .offer-price small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .btn-claim {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 18px;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-claim:hover { background: var(--accent-hover); }
+    .btn-claim.gold {
+      background: var(--accent-gold);
+      color: #000;
+    }
+    .btn-claim.gold:hover { background: var(--accent-gold-hover); }
+
+    .expiry-tag {
+      font-size: 0.72rem;
+      color: var(--danger);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ---- Also Like Section ---- */
+    .also-like {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(245,158,11,0.05));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      margin-top: 8px;
+      transition: border-color 0.2s;
+    }
+    .also-like:hover { border-color: var(--accent); }
+    .also-like-text h3 { font-size: 0.95rem; color: var(--text); margin-bottom: 3px; }
+    .also-like-text p { font-size: 0.78rem; color: var(--text-muted); margin: 0; }
+    .also-like-arrow {
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    /* ---- Modal ---- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 500;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-sheet {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 28px 24px 40px;
+      width: 100%;
+      max-width: 480px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .modal-overlay.open .modal-sheet {
+      transform: translateY(0);
+    }
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .modal-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+    .modal-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .modal-row:last-of-type { border-bottom: none; }
+    .modal-row .label { color: var(--text-muted); }
+    .modal-row .value { font-weight: 700; color: var(--text); }
+    .modal-row .value.gold { color: var(--accent-gold); }
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .btn-modal-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-family: var(--font);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .btn-modal-cancel:hover { border-color: var(--accent); color: var(--text); }
+    .btn-modal-confirm {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-modal-confirm:hover { background: var(--accent-hover); }
+    .btn-modal-confirm.gold {
+      background: var(--accent-gold);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav injected by JS -->
+
+  <div class="page">
+    <!-- Back -->
+    <div id="back-btn"></div>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <h1>⚡ Special Offers</h1>
+      <p>Limited-time deals — don't miss out!</p>
+      <div class="countdown-wrapper">
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-hours">23</div>
+          <div class="countdown-label">Hours</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-mins">45</div>
+          <div class="countdown-label">Mins</div>
+        </div>
+        <div class="countdown-sep">:</div>
+        <div class="countdown-unit">
+          <div class="countdown-num" id="cd-secs">12</div>
+          <div class="countdown-label">Secs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Offer Cards -->
+    <div class="section-header">
+      <h2>🔥 Active Deals</h2>
+    </div>
+
+    <!-- Card 1: First Purchase Bonus -->
+    <div class="offer-card featured" data-offer="0">
+      <div class="offer-top">
+        <div class="offer-name">
+          🎁 First Purchase Bonus
+          <small>First-time buyers only</small>
+        </div>
+        <div class="discount-badge">+50% BONUS</div>
+      </div>
+      <div class="coin-deal">
+        <div class="coin-deal-left">
+          You pay for
+          <span>3,000 coins</span>
+        </div>
+        <div class="coin-deal-right">
+          <div class="get-coins">🪙 4,500 coins</div>
+          <small>+1,500 bonus coins FREE</small>
+        </div>
+      </div>
+      <div class="offer-meta">
+        <div class="offer-meta-item"><span class="dot"></span>For new accounts (first purchase only)</div>
+        <div class="offer-meta-item expiry-tag">⏰ Expires: 2026-06-18 23:59</div>
+      </div>
+      <div class="offer-footer">
+        <div class="offer-price">¥3,000<br><small>incl. tax</small></div>
+        <button class="btn-claim gold" onclick="openModal(0)">Claim Offer →</button>
+      </div>
+    </div>
+
+    <!-- Card 2: Re-deposit Bonus -->
+    <div class="offer-card" data-offer="1">
+      <div class="offer-top">
+        <div class="offer-name">
+          🔁 Re-deposit Bonus
+          <small>Returning purchasers</small>
+        </div>
+        <div class="discount-badge">+20% BONUS</div>
+      </div>
+      <div class="coin-deal">
+        <div class="coin-deal-left">
+          You pay for
+          <span>5,000 coins</span>
+        </div>
+        <div class="coin-deal-right">
+          <div class="get-coins">🪙 6,000 coins</div>
+          <small>+1,000 bonus coins FREE</small>
+        </div>
+      </div>
+      <div class="offer-meta">
+        <div class="offer-meta-item"><span class="dot"></span>For users with at least 1 prior purchase</div>
+        <div class="offer-meta-item expiry-tag">⏰ Expires: 2026-06-20 23:59</div>
+      </div>
+      <div class="offer-footer">
+        <div class="offer-price">¥5,000<br><small>incl. tax</small></div>
+        <button class="btn-claim" onclick="openModal(1)">Claim Offer →</button>
+      </div>
+    </div>
+
+    <!-- Card 3: LINE Registration Deal -->
+    <div class="offer-card" data-offer="2">
+      <div class="offer-top">
+        <div class="offer-name">
+          💚 LINE Registration Deal
+          <small>LINE account holders</small>
+        </div>
+        <div class="discount-badge">+30% BONUS</div>
+      </div>
+      <div class="coin-deal">
+        <div class="coin-deal-left">
+          You pay for
+          <span>2,000 coins</span>
+        </div>
+        <div class="coin-deal-right">
+          <div class="get-coins">🪙 2,600 coins</div>
+          <small>+600 bonus coins FREE</small>
+        </div>
+      </div>
+      <div class="offer-meta">
+        <div class="offer-meta-item"><span class="dot"></span>For users who registered via LINE account</div>
+        <div class="offer-meta-item expiry-tag">⏰ Expires: 2026-06-25 23:59</div>
+      </div>
+      <div class="offer-footer">
+        <div class="offer-price">¥2,000<br><small>incl. tax</small></div>
+        <button class="btn-claim" onclick="openModal(2)">Claim Offer →</button>
+      </div>
+    </div>
+
+    <!-- Card 4: Silver Rank Unlock -->
+    <div class="offer-card" data-offer="3">
+      <div class="offer-top">
+        <div class="offer-name">
+          🥈 Silver Rank Unlock
+          <small>Silver rank or above</small>
+        </div>
+        <div class="discount-badge">+25% BONUS</div>
+      </div>
+      <div class="coin-deal">
+        <div class="coin-deal-left">
+          You pay for
+          <span>10,000 coins</span>
+        </div>
+        <div class="coin-deal-right">
+          <div class="get-coins">🪙 12,500 coins</div>
+          <small>+2,500 bonus coins FREE</small>
+        </div>
+      </div>
+      <div class="offer-meta">
+        <div class="offer-meta-item"><span class="dot"></span>Available for Silver rank and above</div>
+        <div class="offer-meta-item expiry-tag">⏰ Expires: 2026-06-30 23:59</div>
+      </div>
+      <div class="offer-footer">
+        <div class="offer-price">¥10,000<br><small>incl. tax</small></div>
+        <button class="btn-claim gold" onclick="openModal(3)">Claim Offer →</button>
+      </div>
+    </div>
+
+    <!-- You May Also Like -->
+    <div class="section-header mt-24">
+      <h2>You may also like</h2>
+    </div>
+    <a href="coin-purchase.html" class="also-like">
+      <div class="also-like-text">
+        <h3>🪙 Regular Coin Packages</h3>
+        <p>Standard packages from ¥500 — always available</p>
+      </div>
+      <div class="also-like-arrow">›</div>
+    </a>
+  </div>
+
+  <!-- Claim Modal -->
+  <div class="modal-overlay" id="claim-modal" onclick="handleOverlayClick(event)">
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="modal-title">Confirm Offer</div>
+      <div class="modal-subtitle" id="modal-subtitle">Review your purchase details below</div>
+
+      <div class="modal-row">
+        <span class="label">Offer</span>
+        <span class="value" id="modal-offer-name">—</span>
+      </div>
+      <div class="modal-row">
+        <span class="label">You get</span>
+        <span class="value gold" id="modal-coins">—</span>
+      </div>
+      <div class="modal-row">
+        <span class="label">Bonus coins</span>
+        <span class="value" id="modal-bonus" style="color:var(--success)">—</span>
+      </div>
+      <div class="modal-row">
+        <span class="label">Eligibility</span>
+        <span class="value" id="modal-elig" style="font-size:0.8rem;text-align:right;max-width:60%">—</span>
+      </div>
+      <div class="modal-row">
+        <span class="label">Total price</span>
+        <span class="value" id="modal-price">—</span>
+      </div>
+      <div class="modal-row">
+        <span class="label">Expires</span>
+        <span class="value" id="modal-expiry" style="color:var(--danger);font-size:0.82rem">—</span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-modal-confirm" id="modal-confirm-btn" onclick="confirmPurchase()">✓ Confirm Purchase</button>
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/nav.js"></script>
+  <script>
+    injectNav('offers');
+
+    document.getElementById('back-btn').innerHTML = backButton('Back', '../index.html');
+
+    // Offer data
+    const OFFERS = [
+      {
+        name: '🎁 First Purchase Bonus',
+        coins: '4,500 coins',
+        bonus: '+1,500 bonus coins',
+        elig: 'New accounts (first purchase only)',
+        price: '¥3,000',
+        expiry: '2026-06-18 23:59',
+        isGold: true
+      },
+      {
+        name: '🔁 Re-deposit Bonus',
+        coins: '6,000 coins',
+        bonus: '+1,000 bonus coins',
+        elig: 'Users with at least 1 prior purchase',
+        price: '¥5,000',
+        expiry: '2026-06-20 23:59',
+        isGold: false
+      },
+      {
+        name: '💚 LINE Registration Deal',
+        coins: '2,600 coins',
+        bonus: '+600 bonus coins',
+        elig: 'Registered via LINE account',
+        price: '¥2,000',
+        expiry: '2026-06-25 23:59',
+        isGold: false
+      },
+      {
+        name: '🥈 Silver Rank Unlock',
+        coins: '12,500 coins',
+        bonus: '+2,500 bonus coins',
+        elig: 'Silver rank or above',
+        price: '¥10,000',
+        expiry: '2026-06-30 23:59',
+        isGold: true
+      }
+    ];
+
+    let activeOfferIdx = null;
+
+    function openModal(idx) {
+      const o = OFFERS[idx];
+      activeOfferIdx = idx;
+      document.getElementById('modal-title').textContent = o.name;
+      document.getElementById('modal-subtitle').textContent = 'Review your purchase details below';
+      document.getElementById('modal-offer-name').textContent = o.name;
+      document.getElementById('modal-coins').textContent = '🪙 ' + o.coins;
+      document.getElementById('modal-bonus').textContent = o.bonus;
+      document.getElementById('modal-elig').textContent = o.elig;
+      document.getElementById('modal-price').textContent = o.price;
+      document.getElementById('modal-expiry').textContent = o.expiry;
+
+      const btn = document.getElementById('modal-confirm-btn');
+      if (o.isGold) {
+        btn.style.background = 'var(--accent-gold)';
+        btn.style.color = '#000';
+      } else {
+        btn.style.background = 'var(--accent)';
+        btn.style.color = '#fff';
+      }
+
+      document.getElementById('claim-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('claim-modal').classList.remove('open');
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target === document.getElementById('claim-modal')) closeModal();
+    }
+
+    function confirmPurchase() {
+      const o = OFFERS[activeOfferIdx];
+      closeModal();
+      showToast('Offer claimed! Redirecting to payment...', 'success');
+      setTimeout(() => {
+        window.location.href = 'payment.html?offer=' + activeOfferIdx + '&coins=' + o.coins.replace(',','') + '&price=' + encodeURIComponent(o.price);
+      }, 1200);
+    }
+
+    // Countdown timer — starts at 23:45:12
+    let totalSeconds = 23 * 3600 + 45 * 60 + 12;
+
+    function updateCountdown() {
+      if (totalSeconds <= 0) {
+        document.getElementById('cd-hours').textContent = '00';
+        document.getElementById('cd-mins').textContent = '00';
+        document.getElementById('cd-secs').textContent = '00';
+        return;
+      }
+      totalSeconds--;
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+      document.getElementById('cd-mins').textContent = String(m).padStart(2, '0');
+      document.getElementById('cd-secs').textContent = String(s).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>

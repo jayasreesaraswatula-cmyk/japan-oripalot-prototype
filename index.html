@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Oripalot — Prototype Hub</title>
+  <link rel="stylesheet" href="assets/style.css"/>
+  <style>
+    .hub-header {
+      text-align: center;
+      padding: 32px 20px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .hub-header .brand { font-size: 2rem; font-weight: 700; color: var(--accent-gold); }
+    .hub-header .subtitle { font-size: 0.82rem; color: var(--text-dim); margin-top: 6px; }
+    .hub-header .version {
+      display: inline-block;
+      background: rgba(124,58,237,0.2);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 10px;
+      margin-top: 8px;
+    }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin: 20px 0 10px;
+    }
+    .screen-list { display: flex; flex-direction: column; gap: 8px; }
+    .screen-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .screen-link:hover { border-color: var(--accent); transform: translateX(3px); }
+    .screen-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .screen-info { flex: 1; }
+    .screen-info .name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+    .screen-info .desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .screen-arrow { color: var(--text-dim); font-size: 1rem; }
+    .status-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 8px;
+    }
+    .status-ready { background: rgba(16,185,129,0.15); color: var(--success); }
+    .status-wip { background: rgba(245,158,11,0.15); color: var(--warning); }
+    .poc-notice {
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 0.82rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="page" style="padding-bottom:40px;">
+
+  <div class="hub-header">
+    <div class="brand">🎴 Oripalot</div>
+    <div class="subtitle">Japan Social Gaming Platform</div>
+    <div class="version">Prototype v0.1 · June 2026</div>
+  </div>
+
+  <div class="poc-notice">
+    ℹ️ This is a clickable HTML prototype for product scoping and team review. All interactions are simulated — no real backend.
+  </div>
+
+  <!-- Existing POC -->
+  <div class="section-label">Already built (external POC)</div>
+  <div class="screen-list">
+    <a href="https://midi-moral-continue-posts.trycloudflare.com/" target="_blank" class="screen-link">
+      <div class="screen-icon" style="background:rgba(245,158,11,0.15);">🏠</div>
+      <div class="screen-info">
+        <div class="name">Home / Oripa Lobby <span class="status-badge status-ready">Live POC</span></div>
+        <div class="desc">Oripa card listings, filters, quest bar, coin balance</div>
+      </div>
+      <div class="screen-arrow">↗</div>
+    </a>
+    <a href="https://shore-situated-hometown-metal.trycloudflare.com/" target="_blank" class="screen-link">
+      <div class="screen-icon" style="background:rgba(16,185,129,0.15);">🏆</div>
+      <div class="screen-info">
+        <div class="name">Prize History <span class="status-badge status-ready">Live POC</span></div>
+        <div class="desc">Won prizes, waiting to ship, shipped history</div>
+      </div>
+      <div class="screen-arrow">↗</div>
+    </a>
+  </div>
+
+  <!-- User Onboarding -->
+  <div class="section-label">User Onboarding</div>
+  <div class="screen-list">
+    <a href="pages/registration.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(124,58,237,0.15);">👤</div>
+      <div class="screen-info">
+        <div class="name">Registration / Sign Up <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">Email, Google/Apple/LINE SSO, birthdate, phone OTP</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="pages/profile.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(124,58,237,0.15);">📬</div>
+      <div class="screen-info">
+        <div class="name">Profile Registration <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">Shipping address form — Japan & international, multiple addresses</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="pages/kyc.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(239,68,68,0.15);">🪪</div>
+      <div class="screen-info">
+        <div class="name">KYC Verification <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">Triggered at ¥50k, eKYC steps, under-18 guardian flow</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- Coins & Payments -->
+  <div class="section-label">Coins & Payments</div>
+  <div class="screen-list">
+    <a href="pages/wallet.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(245,158,11,0.15);">👛</div>
+      <div class="screen-info">
+        <div class="name">Dual Currency Wallet <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">Oripa Coins vs Free Coins, expiry warnings, transaction history</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="pages/coin-purchase.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(245,158,11,0.15);">💳</div>
+      <div class="screen-info">
+        <div class="name">Coin Purchase Packages <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">500–1,000,000 JPY packages, under-18 limits, payment selection</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="pages/special-offers.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(16,185,129,0.15);">🎁</div>
+      <div class="screen-info">
+        <div class="name">Special Purchase Offers <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">Discount packages — re-deposit, LINE, rank-based offers</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="pages/payment.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(16,185,129,0.15);">💰</div>
+      <div class="screen-info">
+        <div class="name">Payment Flow (PSP) <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">Credit card, Google Pay, Apple Pay, convenience store</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- Support -->
+  <div class="section-label">Support & Information</div>
+  <div class="screen-list">
+    <a href="pages/faq.html" class="screen-link">
+      <div class="screen-icon" style="background:rgba(124,58,237,0.15);">❓</div>
+      <div class="screen-info">
+        <div class="name">FAQ <span class="status-badge status-ready">Ready</span></div>
+        <div class="desc">22 questions across 6 categories, searchable accordion</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+  </div>
+
+  <!-- Coming soon -->
+  <div class="section-label">Coming next</div>
+  <div class="screen-list">
+    <a href="#" class="screen-link" style="opacity:0.5;" onclick="showToast('Coming soon!', 'info'); return false;">
+      <div class="screen-icon" style="background:rgba(107,114,128,0.15);">🎴</div>
+      <div class="screen-info">
+        <div class="name">Oripa Draw Detail <span class="status-badge status-wip">Planned</span></div>
+        <div class="desc">Prize pool, RTP, draw animation, ×1 / ×10 draw</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="#" class="screen-link" style="opacity:0.5;" onclick="showToast('Coming soon!', 'info'); return false;">
+      <div class="screen-icon" style="background:rgba(107,114,128,0.15);">👥</div>
+      <div class="screen-info">
+        <div class="name">Referral / Invite a Friend <span class="status-badge status-wip">Planned</span></div>
+        <div class="desc">Referral link, reward tiers</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="#" class="screen-link" style="opacity:0.5;" onclick="showToast('Coming soon!', 'info'); return false;">
+      <div class="screen-icon" style="background:rgba(107,114,128,0.15);">🏅</div>
+      <div class="screen-info">
+        <div class="name">User Ranks <span class="status-badge status-wip">Planned</span></div>
+        <div class="desc">Rank ladder, benefits, one-time rewards</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+    <a href="#" class="screen-link" style="opacity:0.5;" onclick="showToast('Coming soon!', 'info'); return false;">
+      <div class="screen-icon" style="background:rgba(107,114,128,0.15);">💬</div>
+      <div class="screen-info">
+        <div class="name">LINE Integration <span class="status-badge status-wip">Planned</span></div>
+        <div class="desc">Post-registration LINE prompt, bonus offer</div>
+      </div>
+      <div class="screen-arrow">→</div>
+    </a>
+  </div>
+
+</div>
+
+<script src="assets/nav.js"></script>
+</body>
+</html>
