@@ -1,359 +1,563 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Oripalot — Registration</title>
+  <title>Oripalot — 新規登録</title>
   <link rel="stylesheet" href="../assets/style.css"/>
   <style>
-    .auth-logo {
-      text-align: center;
-      padding: 32px 0 24px;
-    }
-    .auth-logo .brand {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent-gold);
-      letter-spacing: 1px;
-    }
-    .auth-logo .tagline {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-    .otp-grid {
+    /* Page-specific overrides */
+    body { background: #F5F5F5; }
+
+    .page-content { padding: 16px; background: #F5F5F5; }
+
+    /* Banner placeholder */
+    .banner-placeholder {
+      width: 100%;
+      height: 120px;
+      background: repeating-conic-gradient(#ccc 0% 25%, #e8e8e8 0% 50%) 0 0 / 20px 20px;
+      border-radius: var(--radius);
       display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 0.75rem;
+      color: #999;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Form card */
+    .form-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      margin-bottom: 12px;
+    }
+
+    /* Input wrapper for icons */
+    .input-wrap {
+      position: relative;
+    }
+    .input-wrap input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid #CCCCCC;
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.95rem;
+      padding: 12px 40px 12px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .input-wrap input:focus { border-color: var(--red); }
+    .input-wrap input.valid { border-color: var(--success); }
+    .input-wrap input::placeholder { color: #bbb; }
+
+    .input-wrap .icon-left {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: #999;
+      pointer-events: none;
+    }
+    .input-wrap .icon-right {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      cursor: pointer;
+      color: #999;
+    }
+    .input-wrap .icon-right.valid-check { color: var(--success); }
+    .input-wrap input.has-left-icon { padding-left: 40px; }
+
+    /* Label */
+    .field-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .field-label .sub {
+      display: block;
+      font-size: 0.72rem;
+      color: #999;
+      font-weight: 400;
+    }
+    .required-star { color: var(--red); margin-left: 2px; }
+
+    .form-field { margin-bottom: 14px; }
+
+    /* Divider with text */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0;
+      color: #999;
+      font-size: 0.78rem;
+    }
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #E0E0E0;
+    }
+
+    /* Social buttons */
+    .btn-apple {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 10px;
+      width: 100%;
+      padding: 13px 20px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-google {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 20px;
+      background: #fff;
+      color: var(--text);
+      border: 1.5px solid #CCCCCC;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .btn-google:hover { border-color: var(--red); }
+    .btn-line-reg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      padding: 13px 20px;
+      background: #06C755;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    /* Main CTA */
+    .btn-register {
+      display: block;
+      width: 100%;
+      padding: 15px 20px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-register:disabled {
+      background: #C9C9C9;
+      cursor: not-allowed;
+    }
+    .btn-register:not(:disabled):hover { background: var(--red-dark); }
+
+    /* Footer login link */
+    .login-footer {
+      text-align: center;
+      font-size: 0.83rem;
+      color: #666;
+      padding: 12px 0 4px;
+    }
+    .login-footer a { color: var(--red); text-decoration: none; font-weight: 700; }
+
+    /* ---- Modal overlays ---- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 300;
+      display: none;
+      align-items: center;
       justify-content: center;
     }
-    .otp-grid input {
-      width: 48px !important;
-      height: 56px;
+    .modal-overlay.show { display: flex; }
+
+    /* Bottom-sheet style for exit popup */
+    .modal-overlay.bottom-sheet {
+      align-items: flex-end;
+    }
+    .modal-overlay.bottom-sheet .modal-box {
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .modal-box {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 28px 20px 24px;
+      width: calc(100% - 40px);
+      max-width: 380px;
       text-align: center;
-      font-size: 1.4rem;
-      font-weight: 700;
-      border-radius: var(--radius-sm);
-      padding: 0 !important;
     }
-    .age-warning {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      color: var(--danger);
-      margin-top: 8px;
-      display: none;
+    .modal-box .modal-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
     }
-    .tabs {
-      display: flex;
-      gap: 0;
-      background: var(--bg-input);
+    .modal-box h2 {
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .modal-box .modal-sub {
+      font-size: 0.84rem;
+      color: #666;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .modal-coin-row {
+      background: #F5F5F5;
       border-radius: var(--radius);
-      padding: 4px;
-      margin-bottom: 24px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.88rem;
     }
-    .tab {
-      flex: 1;
-      padding: 10px;
-      text-align: center;
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 0.2s;
-      border: none;
-      background: transparent;
-      font-family: var(--font);
+    .modal-coin-row .coin-val {
+      font-weight: 700;
+      font-size: 1rem;
     }
-    .tab.active {
-      background: var(--accent);
+    .modal-btn-red {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: var(--red);
       color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
-    .screen { display: none; }
-    .screen.active { display: block; }
-    .phone-row {
-      display: flex;
-      gap: 8px;
+    .modal-btn-red:hover { background: var(--red-dark); }
+    .modal-btn-gray {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #F0F0F0;
+      color: #666;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
     }
-    .phone-row select {
-      width: 110px;
-      flex-shrink: 0;
-    }
-    .phone-row input { flex: 1; }
-    .checkbox-row {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
-    .checkbox-row input[type=checkbox] {
-      width: 18px; height: 18px;
-      margin-top: 2px;
-      flex-shrink: 0;
-      accent-color: var(--accent);
-    }
-    .checkbox-row label {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .checkbox-row label a { color: var(--accent); text-decoration: none; }
-    .resend-timer {
-      font-size: 0.8rem;
-      color: var(--text-dim);
+    .modal-btn-gray:hover { background: #E0E0E0; }
+
+    /* Exit popup */
+    .exit-box {
+      background: #fff;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 24px 20px;
+      width: 100%;
+      max-width: 480px;
       text-align: center;
-      margin-top: 12px;
     }
-    .resend-timer span { color: var(--accent); cursor: pointer; }
-    .success-screen {
-      text-align: center;
-      padding: 40px 20px;
-    }
-    .success-icon {
-      width: 72px; height: 72px;
-      background: rgba(16,185,129,0.15);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 2rem;
-    }
+    .exit-box h2 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .exit-box p { font-size: 0.83rem; color: #666; margin-bottom: 20px; }
+    .exit-box .btn-row { display: flex; gap: 10px; }
+    .exit-box .btn-row button { flex: 1; padding: 13px; border: none; border-radius: 30px; font-family: var(--font); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+    .exit-box .btn-cancel { background: #F0F0F0; color: #666; }
+    .exit-box .btn-exit { background: var(--red); color: #fff; }
   </style>
 </head>
 <body>
 
-<div class="page">
-  <div class="auth-logo">
-    <div class="brand">🎴 Oripalot</div>
-    <div class="tagline">Japan's premium oripa experience</div>
-  </div>
+<div class="page" id="main-page">
 
-  <!-- Step Indicator -->
-  <div class="steps" id="steps">
-    <div class="step active" id="step1">
-      <div class="step-dot">1</div>
-      <div class="step-label">Account</div>
+  <!-- Header: auth (no coins) — injected via injectNav, but we do it inline for auth pages -->
+  <header class="auth-header" style="position:sticky;top:0;z-index:100;">
+    <a href="../index.html" class="logo">
+      <div class="logo-icon">🎴</div>
+      <span class="logo-text">オリパロット</span>
+    </a>
+    <div class="auth-header-btns">
+      <a href="registration.html" class="btn-signup-sm">登録</a>
+      <a href="registration.html" class="btn-login-sm">ログイン</a>
     </div>
-    <div class="step" id="step2">
-      <div class="step-dot">2</div>
-      <div class="step-label">Birthday</div>
-    </div>
-    <div class="step" id="step3">
-      <div class="step-dot">3</div>
-      <div class="step-label">Phone</div>
-    </div>
-    <div class="step" id="step4">
-      <div class="step-dot">4</div>
-      <div class="step-label">Done</div>
-    </div>
-  </div>
+  </header>
 
-  <!-- SCREEN 1: Account creation -->
-  <div class="screen active" id="screen-account">
-    <div class="section-header">
-      <h1>Create your account</h1>
-      <p class="mt-8">Sign up to start playing Oripa draws</p>
-    </div>
+  <div class="page-content">
 
-    <!-- SSO Buttons -->
-    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-      <button class="btn btn-social" onclick="showToast('Google sign-up — coming soon', 'info')">
-        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        Continue with Google
+    <!-- Banner image placeholder -->
+    <div class="banner-placeholder">BANNER IMAGE</div>
+
+    <!-- Form card -->
+    <div class="form-card">
+
+      <!-- Email -->
+      <div class="form-field">
+        <label class="field-label">
+          メールアドレス <span class="required-star">*</span>
+          <span class="sub">Email Address *</span>
+        </label>
+        <div class="input-wrap">
+          <input type="email" id="inp-email" placeholder="example@email.com" autocomplete="email" oninput="handleInput(this)"/>
+          <span class="icon-right" id="check-email" style="display:none;">✅</span>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-field">
+        <label class="field-label">
+          パスワード（半角英数字8文字以上）<span class="required-star">*</span>
+          <span class="sub">Password (At least 8 alphanumeric characters) *</span>
+        </label>
+        <div class="input-wrap">
+          <input type="password" id="inp-password" placeholder="8文字以上の英数字" autocomplete="new-password" oninput="handleInput(this)"/>
+          <span class="icon-right" id="eye-toggle" onclick="togglePassword()" title="パスワードを表示">👁</span>
+        </div>
+      </div>
+
+      <!-- Date of Birth -->
+      <div class="form-field">
+        <label class="field-label">
+          生年月日 <span class="required-star">*</span>
+          <span class="sub">Date of Birth *</span>
+        </label>
+        <div class="input-wrap">
+          <span class="icon-left" style="left:12px;font-size:0.9rem;">📅</span>
+          <input type="date" id="inp-dob" class="has-left-icon" oninput="handleInput(this)"/>
+          <span class="icon-right" id="check-dob" style="display:none;">✅</span>
+        </div>
+      </div>
+
+      <!-- Invitation Code -->
+      <div class="form-field">
+        <label class="field-label">
+          招待コード（任意）
+          <span class="sub">Invitation Code (Optional)</span>
+        </label>
+        <div class="input-wrap">
+          <input type="text" id="inp-invite" placeholder="招待コードをお持ちの場合は入力" oninput="handleInput(this)"/>
+          <span class="icon-right" id="check-invite" style="display:none;">✅</span>
+        </div>
+      </div>
+
+      <!-- Agree checkbox -->
+      <div class="checkbox-row" style="margin-bottom:18px;">
+        <input type="checkbox" id="agree-checkbox" onchange="toggleRegisterBtn()"/>
+        <label for="agree-checkbox">
+          会員登録により<a href="#">利用規約</a>及び<a href="#">プライバシーポリシー</a>に同意します<br/>
+          <span style="color:#999;">By registering, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></span>
+        </label>
+      </div>
+
+      <!-- Main CTA -->
+      <button class="btn-register" id="register-btn" disabled onclick="handleRegister()">
+        無料で新規登録する<br/>
+        <span style="font-size:0.75rem;font-weight:400;opacity:0.85;">Sign Up for Free</span>
       </button>
-      <button class="btn btn-social" onclick="showToast('Apple sign-up — coming soon', 'info')">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-        Continue with Apple
-      </button>
-      <button class="btn btn-social" onclick="showToast('LINE sign-up — coming soon', 'info')" style="border-color:#06C755;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#06C755"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
-        Continue with LINE
-      </button>
+
+    </div><!-- /form-card -->
+
+    <!-- Other methods divider -->
+    <div class="or-divider">他の方法で登録する / Sign up with other methods</div>
+
+    <!-- Social sign-up buttons -->
+    <button class="btn-apple" onclick="showToast('Apple サインアップ — coming soon', 'info')">
+      🍎 Appleでサインアップ
+      <span style="font-size:0.75rem;font-weight:400;opacity:0.75;">Sign up with Apple</span>
+    </button>
+
+    <button class="btn-google" onclick="showToast('Google 登録 — coming soon', 'info')">
+      <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Googleで登録
+      <span style="font-size:0.75rem;font-weight:400;color:#999;">Sign up with Google</span>
+    </button>
+
+    <button class="btn-line-reg" onclick="showToast('LINE 登録 — coming soon', 'info')">
+      💬 LINEで登録
+      <span style="font-size:0.75rem;font-weight:400;opacity:0.85;">Sign up with LINE</span>
+    </button>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      すでにアカウントをお持ちですか？<a href="#">ログイン</a><br/>
+      <span style="color:#999;font-size:0.75rem;">Already have an account? <a href="#" style="color:var(--red);font-weight:700;">Log In</a></span>
     </div>
 
-    <div class="divider">or sign up with email</div>
+  </div><!-- /page-content -->
 
-    <div class="form-group">
-      <label>Email address</label>
-      <input type="email" placeholder="you@example.com" id="email"/>
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" placeholder="Min. 8 characters" id="password"/>
-      <span class="hint">Must include a number and special character</span>
-    </div>
-    <div class="form-group">
-      <label>Confirm Password</label>
-      <input type="password" placeholder="Re-enter password" id="confirm-password"/>
-    </div>
+</div><!-- /page -->
 
-    <button class="btn btn-primary" onclick="goToStep('birthday')">Continue →</button>
+<!-- Bottom nav injected by nav.js -->
 
-    <p class="text-center mt-16" style="font-size:0.85rem;">
-      Already have an account? <a href="#" style="color:var(--accent);">Log in</a>
-    </p>
+<!-- ========== SUCCESS MODAL ========== -->
+<div class="modal-overlay" id="modal-success">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <h2>登録完了！<br/><span style="font-size:0.85rem;font-weight:400;color:#666;">Registration Complete!</span></h2>
+    <div class="modal-sub">
+      アカウントが作成されました。<br/>
+      ウェルカムボーナスをプレゼント！
+    </div>
+    <div class="modal-coin-row">
+      <span>💎 フリーコイン</span>
+      <span class="coin-val" style="color:#4A90D9;">+500</span>
+    </div>
+    <div class="modal-coin-row" style="margin-top:-10px;">
+      <span>🟡 オリパコイン</span>
+      <span class="coin-val" style="color:#F5A623;">+0</span>
+    </div>
+    <button class="modal-btn-red" onclick="window.location.href='../index.html'">
+      ゲームを始める / Start Playing
+    </button>
   </div>
+</div>
 
-  <!-- SCREEN 2: Birthday -->
-  <div class="screen" id="screen-birthday">
-    <div class="section-header">
-      <h1>Your date of birth</h1>
-      <p class="mt-8">Required for age verification and purchase limits</p>
-    </div>
-
-    <div class="form-group">
-      <label>Date of Birth</label>
-      <input type="date" id="dob" onchange="checkAge(this.value)"/>
-    </div>
-
-    <div class="age-warning" id="age-warning-under16">
-      ⚠️ Users under 16 have a monthly purchase limit of ¥5,000.
-    </div>
-    <div class="age-warning" id="age-warning-under18" style="background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:var(--warning);">
-      ⚠️ Users aged 16–17 have a monthly purchase limit of ¥20,000. Payment limited to Google Pay and Apple Pay only.
-    </div>
-
-    <div class="card mt-16" style="font-size:0.82rem; color:var(--text-muted); line-height:1.7;">
-      <strong style="color:var(--text);">Why we ask</strong><br/>
-      Japanese regulations require us to verify your age. Users under 18 have special purchase limits and KYC requirements.
-    </div>
-
-    <div class="checkbox-row mt-16">
-      <input type="checkbox" id="terms"/>
-      <label for="terms">I agree to the <a href="#">Terms of Use</a>, <a href="#">Privacy Policy</a>, and <a href="#">Responsible Play</a> policy.</label>
-    </div>
-
-    <button class="btn btn-primary" onclick="goToStep('phone')">Continue →</button>
-    <button class="btn btn-ghost mt-8 w-full text-center" onclick="goToStep('account')">← Back</button>
-  </div>
-
-  <!-- SCREEN 3: Phone verification -->
-  <div class="screen" id="screen-phone">
-    <div class="section-header">
-      <h1>Verify your phone</h1>
-      <p class="mt-8">Helps prevent duplicate accounts and secures your account</p>
-    </div>
-
-    <div id="phone-entry">
-      <div class="form-group">
-        <label>Mobile phone number</label>
-        <div class="phone-row">
-          <select>
-            <option value="+81">🇯🇵 +81</option>
-            <option value="+1">🇺🇸 +1</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+61">🇦🇺 +61</option>
-            <option value="+65">🇸🇬 +65</option>
-          </select>
-          <input type="tel" placeholder="090-1234-5678" id="phone"/>
-        </div>
-      </div>
-      <button class="btn btn-primary" onclick="sendOTP()">Send verification code</button>
-    </div>
-
-    <div id="otp-entry" style="display:none;">
-      <div class="alert alert-info">
-        📱 A 6-digit code has been sent to your phone
-      </div>
-      <div class="form-group">
-        <label>Enter verification code</label>
-        <div class="otp-grid" id="otp-grid">
-          <input type="number" maxlength="1" min="0" max="9"/>
-          <input type="number" maxlength="1" min="0" max="9"/>
-          <input type="number" maxlength="1" min="0" max="9"/>
-          <input type="number" maxlength="1" min="0" max="9"/>
-          <input type="number" maxlength="1" min="0" max="9"/>
-          <input type="number" maxlength="1" min="0" max="9"/>
-        </div>
-      </div>
-      <div class="resend-timer">Didn't receive it? <span onclick="showToast('Code resent!', 'success')">Resend code</span> (available in 30s)</div>
-      <button class="btn btn-primary mt-16" onclick="verifyOTP()">Verify →</button>
-    </div>
-
-    <button class="btn btn-ghost mt-8 w-full text-center" onclick="goToStep('birthday')">← Back</button>
-  </div>
-
-  <!-- SCREEN 4: Success -->
-  <div class="screen" id="screen-done">
-    <div class="success-screen">
-      <div class="success-icon">✅</div>
-      <h1>Welcome to Oripalot!</h1>
-      <p class="mt-8">Your account has been created successfully.</p>
-
-      <div class="card mt-24" style="text-align:left;">
-        <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:12px;">🎁 Welcome bonus</div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span>Free Coins (registration bonus)</span>
-          <span class="text-green">+500 💚</span>
-        </div>
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span>Phone verification bonus</span>
-          <span class="text-green">+100 💚</span>
-        </div>
-      </div>
-
-      <div class="alert alert-info mt-16" style="text-align:left;">
-        💬 Register your LINE account to receive an extra bonus and exclusive deals!
-      </div>
-
-      <button class="btn btn-gold mt-16" onclick="window.location.href='../index.html'">Start playing →</button>
-      <button class="btn btn-outline mt-8" onclick="window.location.href='line-integration.html'">Register LINE account</button>
+<!-- ========== EXIT POPUP (bottom sheet) ========== -->
+<div class="modal-overlay bottom-sheet" id="modal-exit" onclick="handleExitOverlayClick(event)">
+  <div class="exit-box" id="exit-box">
+    <h2>本当に登録をやめますか？</h2>
+    <p>入力した内容は保存されません。<br/><span style="color:#999;">Are you sure you want to stop registering?</span></p>
+    <div class="btn-row">
+      <button class="btn-cancel" onclick="closeExitModal()">キャンセル<br/><span style="font-size:0.72rem;font-weight:400;">Cancel</span></button>
+      <button class="btn-exit" onclick="window.location.href='../index.html'">終了<br/><span style="font-size:0.72rem;font-weight:400;">Exit</span></button>
     </div>
   </div>
-
-</div><!-- end .page -->
+</div>
 
 <script src="../assets/nav.js"></script>
 <script>
-  // No top/bottom nav on auth screens — cleaner UX
-  // but keep toast utility
+  // Inject bottom nav only (no top header since we have auth header inline)
+  (function() {
+    const navItems = [
+      { id: 'oripa',  icon: '🎴', label: 'オリパ',   href: '../index.html' },
+      { id: 'loot',   icon: '📦', label: 'MY LOOT',  href: 'prize-history.html' },
+      { id: 'quest',  icon: '🎯', label: 'クエスト', href: '#' },
+      { id: 'mypage', icon: '👤', label: 'マイページ', href: 'mypage.html' },
+    ];
+    const navHTML = navItems.map(item => `
+      <a href="${item.href}" class="${item.id === 'oripa' ? 'active' : ''}">
+        <span class="nav-icon">${item.icon}</span>
+        <span>${item.label}</span>
+      </a>`).join('');
+    document.body.insertAdjacentHTML('beforeend',
+      `<nav class="bottom-nav">${navHTML}</nav>`);
+  })();
 
-  function goToStep(step) {
-    const screens = ['account','birthday','phone','done'];
-    const stepMap = { account:0, birthday:1, phone:2, done:3 };
-    const idx = stepMap[step];
+  // --- Input validation & green checkmark ---
+  function handleInput(input) {
+    const id = input.id;
+    let valid = false;
+    if (id === 'inp-email')    valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    if (id === 'inp-password') valid = input.value.length >= 8;
+    if (id === 'inp-dob')      valid = input.value !== '';
+    if (id === 'inp-invite')   valid = input.value.length > 0;
 
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + step).classList.add('active');
-
-    document.querySelectorAll('.step').forEach((s, i) => {
-      s.classList.remove('active','done');
-      if (i < idx) s.classList.add('done');
-      if (i === idx) s.classList.add('active');
-    });
-
-    window.scrollTo(0,0);
+    const checkMap = {
+      'inp-email':    'check-email',
+      'inp-password': null,
+      'inp-dob':      'check-dob',
+      'inp-invite':   'check-invite'
+    };
+    // For password field, check icon is the eye toggle — show valid class only
+    if (id === 'inp-password') {
+      input.classList.toggle('valid', valid);
+      return;
+    }
+    const checkId = checkMap[id];
+    if (checkId) {
+      const icon = document.getElementById(checkId);
+      if (icon) icon.style.display = valid ? 'inline' : 'none';
+      input.classList.toggle('valid', valid);
+    }
   }
 
-  function checkAge(dateStr) {
-    if (!dateStr) return;
-    const dob = new Date(dateStr);
-    const today = new Date();
-    let age = today.getFullYear() - dob.getFullYear();
-    const m = today.getMonth() - dob.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-
-    document.getElementById('age-warning-under16').style.display = age < 16 ? 'block' : 'none';
-    document.getElementById('age-warning-under18').style.display = (age >= 16 && age < 18) ? 'block' : 'none';
+  // --- Password eye toggle ---
+  function togglePassword() {
+    const inp = document.getElementById('inp-password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
   }
 
-  function sendOTP() {
-    const phone = document.getElementById('phone').value;
-    if (!phone) { showToast('Please enter your phone number', 'danger'); return; }
-    document.getElementById('phone-entry').style.display = 'none';
-    document.getElementById('otp-entry').style.display = 'block';
-    showToast('Verification code sent!', 'success');
-    setupOTPInputs('#otp-grid');
+  // --- Checkbox toggles register button ---
+  function toggleRegisterBtn() {
+    const checked = document.getElementById('agree-checkbox').checked;
+    const btn = document.getElementById('register-btn');
+    btn.disabled = !checked;
   }
 
-  function verifyOTP() {
-    // Simulate verification — any 6-digit code works in prototype
-    const inputs = document.querySelectorAll('#otp-grid input');
-    const code = Array.from(inputs).map(i => i.value).join('');
-    if (code.length < 6) { showToast('Please enter the full 6-digit code', 'danger'); return; }
-    showToast('Phone verified!', 'success');
-    setTimeout(() => goToStep('done'), 800);
+  // --- Register submit ---
+  function handleRegister() {
+    const email = document.getElementById('inp-email').value;
+    const password = document.getElementById('inp-password').value;
+    const dob = document.getElementById('inp-dob').value;
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast('有効なメールアドレスを入力してください', 'danger'); return;
+    }
+    if (password.length < 8) {
+      showToast('パスワードは8文字以上で入力してください', 'danger'); return;
+    }
+    if (!dob) {
+      showToast('生年月日を入力してください', 'danger'); return;
+    }
+    // Show success modal
+    document.getElementById('modal-success').classList.add('show');
+  }
+
+  // --- Exit popup: show when clicking outside form area ---
+  document.addEventListener('click', function(e) {
+    // Only trigger on specific "outside" interactions, not form elements
+    if (e.target.id === 'main-page' || e.target.classList.contains('page-content')) {
+      const emailFilled = document.getElementById('inp-email').value;
+      const passFilled  = document.getElementById('inp-password').value;
+      if (emailFilled || passFilled) {
+        document.getElementById('modal-exit').classList.add('show');
+      }
+    }
+  });
+
+  function closeExitModal() {
+    document.getElementById('modal-exit').classList.remove('show');
+  }
+  function handleExitOverlayClick(e) {
+    if (e.target === document.getElementById('modal-exit')) {
+      closeExitModal();
+    }
   }
 </script>
 </body>

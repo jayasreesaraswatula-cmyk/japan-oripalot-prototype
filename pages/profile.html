@@ -3,682 +3,481 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Oripalot — Profile &amp; Address</title>
+  <title>Oripalot — マイページ</title>
   <link rel="stylesheet" href="../assets/style.css"/>
   <style>
-    /* ---- Tabs ---- */
-    .tabs {
-      display: flex;
-      background: var(--bg-input);
+    /* ---- Profile Hero ---- */
+    .profile-hero {
+      background: var(--white);
       border-radius: var(--radius);
-      padding: 4px;
-      margin-bottom: 24px;
-      gap: 0;
-    }
-    .tab {
-      flex: 1;
-      padding: 10px;
+      box-shadow: var(--shadow);
+      margin: 12px 16px;
+      padding: 24px 16px 20px;
       text-align: center;
-      border-radius: var(--radius-sm);
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: all 0.2s;
-      border: none;
-      background: transparent;
-      font-family: var(--font);
     }
-    .tab.active {
-      background: var(--accent);
-      color: #fff;
+    .avatar-circle {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--red);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 12px;
+      box-shadow: 0 4px 12px rgba(232,0,45,0.3);
     }
-
-    /* ---- Row group (2 columns) ---- */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    /* ---- Postal lookup row ---- */
-    .postal-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-      align-items: flex-end;
-    }
-    .postal-row .btn-lookup {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
+    .profile-name {
+      font-size: 1.15rem;
+      font-weight: 700;
       color: var(--text);
-      font-family: var(--font);
-      font-size: 0.8rem;
-      font-weight: 600;
-      padding: 12px 14px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .postal-row .btn-lookup:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* ---- Address card ---- */
-    .address-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 12px;
-      position: relative;
-    }
-    .address-card .addr-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--accent);
-      margin-bottom: 6px;
-    }
-    .address-card .addr-name {
-      font-weight: 700;
-      font-size: 0.95rem;
       margin-bottom: 4px;
     }
-    .address-card .addr-detail {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .address-card .addr-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-    .btn-sm {
-      padding: 7px 14px;
-      font-size: 0.8rem;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      font-family: var(--font);
-      transition: all 0.2s;
-    }
-    .btn-sm-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-    }
-    .btn-sm-outline:hover { border-color: var(--accent); color: var(--accent); }
-    .btn-sm-danger {
-      background: transparent;
-      border: 1px solid rgba(239,68,68,0.4);
-      color: var(--danger);
-    }
-    .btn-sm-danger:hover { background: rgba(239,68,68,0.1); }
-
-    /* ---- Section title ---- */
-    .section-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
+    .profile-id {
+      font-size: 0.78rem;
       color: var(--text-dim);
-      margin-bottom: 12px;
-      margin-top: 28px;
+      margin-bottom: 14px;
+    }
+    .btn-edit-outline {
+      display: inline-block;
+      padding: 8px 24px;
+      border: 1.5px solid var(--red);
+      border-radius: 20px;
+      color: var(--red);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: var(--font);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
     }
 
-    /* ---- Form panel visibility ---- */
-    .form-panel { display: none; }
-    .form-panel.active { display: block; }
-
-    /* ---- Add new address button ---- */
-    .btn-add {
+    /* ---- Coin Balance Card ---- */
+    .coin-balance-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin: 0 16px 12px;
+      padding: 16px;
+    }
+    .coin-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .coin-col {
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      text-align: center;
+    }
+    .coin-col-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .coin-amount-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 13px;
-      background: transparent;
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      color: var(--text-muted);
-      font-family: var(--font);
-      font-size: 0.88rem;
-      font-weight: 600;
+      gap: 6px;
+    }
+    .coin-amount {
+      font-size: 1.4rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .coin-amount.gold    { color: var(--gold); }
+    .coin-amount.diamond { color: var(--diamond); }
+    .coin-add-circle {
+      width: 26px; height: 26px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 24px;
+      text-decoration: none;
+      flex-shrink: 0;
     }
-    .btn-add:hover { border-color: var(--accent); color: var(--accent); }
-
-    /* ---- New form collapse ---- */
-    .new-form-wrap {
-      display: none;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .new-form-wrap.open { display: block; }
-
-    /* ---- Security note ---- */
-    .security-note {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      background: rgba(245,158,11,0.08);
-      border: 1px solid rgba(245,158,11,0.25);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 0.8rem;
-      color: var(--warning);
-      margin-bottom: 24px;
-      line-height: 1.5;
-    }
-    .security-note svg { flex-shrink: 0; margin-top: 2px; }
-
-    /* ---- Delete confirm overlay ---- */
-    .confirm-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 200;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .confirm-overlay.open { display: flex; }
-    .confirm-sheet {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      padding: 28px 24px 40px;
-      width: 100%;
-      max-width: 480px;
-    }
-    .confirm-sheet h3 { margin-bottom: 8px; }
-    .confirm-sheet p { margin-bottom: 20px; }
-    .confirm-actions { display: flex; gap: 12px; }
-    .confirm-actions .btn { flex: 1; }
-
-    /* ---- Edit modal ---- */
-    .edit-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      z-index: 200;
-      align-items: flex-start;
-      justify-content: center;
-      overflow-y: auto;
-      padding: 20px;
-    }
-    .edit-modal.open { display: flex; }
-    .edit-modal-inner {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      width: 100%;
-      max-width: 440px;
-      margin: auto;
-    }
-    .edit-modal-header {
+    .coin-expiry {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      background: #fff0f2;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
     }
-    .btn-close {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
+    .coin-expiry-text {
+      font-size: 0.78rem;
+      color: var(--red);
+      font-weight: 600;
+    }
+    .coin-expiry-link {
+      font-size: 0.72rem;
+      color: var(--red);
+      text-decoration: underline;
       cursor: pointer;
-      padding: 4px;
-      line-height: 1;
+      white-space: nowrap;
+      margin-left: 8px;
     }
-    .btn-close:hover { color: var(--text); }
+
+    /* ---- Rank Card ---- */
+    .rank-card {
+      background: linear-gradient(135deg, #FFF8E7 0%, #FFF0CC 100%);
+      border: 1px solid #F5A623;
+      border-radius: var(--radius);
+      margin: 0 16px 12px;
+      padding: 16px;
+    }
+    .rank-badge-pill {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    .rank-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .rank-icon-circle {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--orange), #F5A623);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 3px 10px rgba(255,107,0,0.35);
+      flex-shrink: 0;
+    }
+    .rank-info { flex: 1; }
+    .rank-title {
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: 0.5px;
+    }
+    .rank-subtitle {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .rank-next {
+      font-size: 0.8rem;
+      color: var(--orange);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .rank-progress-bar {
+      background: #F5E5C0;
+      border-radius: 10px;
+      height: 10px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .rank-progress-fill {
+      height: 100%;
+      width: 75%;
+      background: linear-gradient(90deg, var(--orange), var(--gold));
+      border-radius: 10px;
+    }
+    .rank-progress-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: right;
+      margin-bottom: 12px;
+    }
+    .btn-rank-benefit {
+      display: block;
+      width: 100%;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    /* ---- My Menu Grid ---- */
+    .my-menu-section {
+      margin: 0 16px 12px;
+    }
+    .my-menu-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+      padding-top: 4px;
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+    .menu-tile {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 8px 12px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .menu-tile:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .menu-tile-icon {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .menu-tile-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .menu-tile-label-sub {
+      font-size: 0.62rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* ---- Footer ---- */
+    .site-footer {
+      background: #1A1A1A;
+      color: #ccc;
+      padding: 24px 16px 20px;
+      margin-top: 24px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .footer-logo-icon {
+      width: 32px; height: 32px;
+      background: var(--red);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .footer-logo-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      margin-bottom: 14px;
+    }
+    .footer-links a {
+      font-size: 0.75rem;
+      color: #aaa;
+      text-decoration: none;
+    }
+    .footer-social {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .social-icon {
+      width: 34px; height: 34px;
+      background: #333;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .footer-legal {
+      font-size: 0.68rem;
+      color: #666;
+      line-height: 1.6;
+      border-top: 1px solid #333;
+      padding-top: 12px;
+    }
   </style>
 </head>
 <body>
-<script src="../assets/nav.js"></script>
-
 <div class="page">
 
-  <!-- Page header -->
-  <div class="section-header" style="margin-bottom:24px;">
-    <h1>配送先住所</h1>
-    <p style="margin-top:4px;">Shipping Address</p>
+  <!-- Profile Hero -->
+  <div class="profile-hero">
+    <div class="avatar-circle">🎴</div>
+    <div class="profile-name">山田 太郎</div>
+    <div class="profile-id">ID: XXXXXX</div>
+    <a href="#" class="btn-edit-outline">プロフィール編集 / Edit Profile</a>
   </div>
 
-  <!-- Security warning -->
-  <div class="security-note">
-    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-    </svg>
-    <span>住所は本人確認に使用されます。重複アカウント防止のため、登録済みの住所と一致する新規アカウントは停止される場合があります。<br/><em style="opacity:0.8;">Addresses are verified to prevent duplicate accounts.</em></span>
-  </div>
-
-  <!-- ---- SAVED ADDRESSES ---- -->
-  <div class="section-title">保存された住所 · Saved Addresses</div>
-
-  <div id="savedAddressesContainer">
-    <div class="address-card" id="addr-1">
-      <div class="addr-label">
-        <span class="badge badge-purple" style="vertical-align:middle;">Default</span>
+  <!-- Coin Balance -->
+  <div class="coin-balance-card">
+    <div class="coin-cols">
+      <div class="coin-col">
+        <div class="coin-col-label">オリパコイン</div>
+        <div class="coin-amount-row">
+          <span class="coin-amount gold">🟡 10,000</span>
+          <a href="coin-purchase.html" class="coin-add-circle">+</a>
+        </div>
       </div>
-      <div class="addr-name">田中 花子 (Tanaka Hanako)</div>
-      <div class="addr-detail">
-        〒150-0001<br/>
-        東京都渋谷区神宮前1丁目1番地 コスモタワー 501号室<br/>
-        📞 090-1234-5678
+      <div class="coin-col">
+        <div class="coin-col-label">フリーポイント</div>
+        <div class="coin-amount-row">
+          <span class="coin-amount diamond">💎 10,000</span>
+        </div>
       </div>
-      <div class="addr-actions">
-        <button class="btn-sm btn-sm-outline" onclick="openEditModal()">✏️ 編集 Edit</button>
-        <button class="btn-sm btn-sm-danger" onclick="openDeleteConfirm()">🗑️ 削除 Delete</button>
-      </div>
+    </div>
+    <div class="coin-expiry">
+      <span class="coin-expiry-text">⚠️ コインの有効期限はあと3日です！</span>
+      <span class="coin-expiry-link">詳細を確認</span>
     </div>
   </div>
 
-  <p style="font-size:0.78rem; color:var(--text-dim); margin-bottom:14px;">
-    複数の住所を保存できます。You can save multiple addresses.
-  </p>
-
-  <!-- Add new address button -->
-  <button class="btn-add" id="addNewBtn" onclick="toggleNewForm()">
-    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-    </svg>
-    新しい住所を追加 · Add New Address
-  </button>
-
-  <!-- ---- NEW ADDRESS FORM ---- -->
-  <div class="new-form-wrap" id="newFormWrap">
-    <h3 style="margin-bottom:16px;">新しい住所を追加</h3>
-
-    <!-- Mode tabs -->
-    <div class="tabs">
-      <button class="tab active" id="tabJP" onclick="switchTab('jp')">🇯🇵 Japan</button>
-      <button class="tab" id="tabIntl" onclick="switchTab('intl')">🌐 International</button>
-    </div>
-
-    <!-- JAPAN FORM -->
-    <div class="form-panel active" id="panelJP">
-      <div class="form-row">
-        <div class="form-group">
-          <label>姓 Last Name</label>
-          <input type="text" id="jp-sei" placeholder="田中" autocomplete="family-name"/>
-        </div>
-        <div class="form-group">
-          <label>名 First Name</label>
-          <input type="text" id="jp-mei" placeholder="花子" autocomplete="given-name"/>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>セイ Last Name (Kana)</label>
-          <input type="text" id="jp-sei-kana" placeholder="タナカ"/>
-        </div>
-        <div class="form-group">
-          <label>メイ First Name (Kana)</label>
-          <input type="text" id="jp-mei-kana" placeholder="ハナコ"/>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>郵便番号 Postal Code</label>
-        <div class="postal-row">
-          <input type="text" id="jp-postal" placeholder="150-0001" maxlength="8"
-                 oninput="formatPostal(this)" inputmode="numeric"/>
-          <button class="btn-lookup" onclick="lookupAddress()">住所を検索</button>
-        </div>
-        <span class="hint">7桁の郵便番号を入力してください (XXX-XXXX)</span>
-      </div>
-
-      <div class="form-group">
-        <label>都道府県 Prefecture</label>
-        <select id="jp-pref">
-          <option value="">選択してください…</option>
-          <option>北海道</option><option>青森県</option><option>岩手県</option>
-          <option>宮城県</option><option>秋田県</option><option>山形県</option>
-          <option>福島県</option><option>茨城県</option><option>栃木県</option>
-          <option>群馬県</option><option>埼玉県</option><option>千葉県</option>
-          <option selected>東京都</option><option>神奈川県</option><option>新潟県</option>
-          <option>富山県</option><option>石川県</option><option>福井県</option>
-          <option>山梨県</option><option>長野県</option><option>岐阜県</option>
-          <option>静岡県</option><option>愛知県</option><option>三重県</option>
-          <option>滋賀県</option><option>京都府</option><option>大阪府</option>
-          <option>兵庫県</option><option>奈良県</option><option>和歌山県</option>
-          <option>鳥取県</option><option>島根県</option><option>岡山県</option>
-          <option>広島県</option><option>山口県</option><option>徳島県</option>
-          <option>香川県</option><option>愛媛県</option><option>高知県</option>
-          <option>福岡県</option><option>佐賀県</option><option>長崎県</option>
-          <option>熊本県</option><option>大分県</option><option>宮崎県</option>
-          <option>鹿児島県</option><option>沖縄県</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>市区町村・番地 City / Street</label>
-        <input type="text" id="jp-city" placeholder="渋谷区神宮前"/>
-      </div>
-
-      <div class="form-group">
-        <label>番地 Street Number</label>
-        <input type="text" id="jp-street" placeholder="1丁目1番地"/>
-      </div>
-
-      <div class="form-group">
-        <label>マンション・部屋番号 Apt / Room <span style="color:var(--text-dim);">(任意)</span></label>
-        <input type="text" id="jp-apt" placeholder="コスモタワー 501号室"/>
-      </div>
-
-      <div class="form-group">
-        <label>電話番号 Phone</label>
-        <input type="tel" id="jp-phone" placeholder="090-1234-5678" inputmode="tel"/>
+  <!-- Rank Section -->
+  <div class="rank-card">
+    <div><span class="rank-badge-pill">現在ランク</span></div>
+    <div class="rank-header">
+      <div class="rank-icon-circle">🎴</div>
+      <div class="rank-info">
+        <div class="rank-title">ブロンズ</div>
+        <div class="rank-subtitle">BRONZE</div>
       </div>
     </div>
-
-    <!-- INTERNATIONAL FORM -->
-    <div class="form-panel" id="panelIntl">
-      <div class="form-row">
-        <div class="form-group">
-          <label>First Name</label>
-          <input type="text" id="intl-first" placeholder="Hanako" autocomplete="given-name"/>
-        </div>
-        <div class="form-group">
-          <label>Last Name</label>
-          <input type="text" id="intl-last" placeholder="Tanaka" autocomplete="family-name"/>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Apt / Room <span style="color:var(--text-dim);">(optional)</span></label>
-        <input type="text" id="intl-apt" placeholder="Suite 501"/>
-      </div>
-
-      <div class="form-group">
-        <label>Street Number</label>
-        <input type="text" id="intl-streetno" placeholder="1-1"/>
-      </div>
-
-      <div class="form-group">
-        <label>Street / City</label>
-        <input type="text" id="intl-street" placeholder="Jingumae, Shibuya-ku"/>
-      </div>
-
-      <div class="form-group">
-        <label>State / Province / Prefecture</label>
-        <input type="text" id="intl-state" placeholder="Tokyo"/>
-      </div>
-
-      <div class="form-group">
-        <label>Country</label>
-        <select id="intl-country">
-          <option value="">Select country…</option>
-          <option>Australia</option><option>Brazil</option><option>Canada</option>
-          <option>China</option><option>France</option><option>Germany</option>
-          <option>Hong Kong</option><option>India</option><option>Indonesia</option>
-          <option>Italy</option><option>South Korea</option><option>Malaysia</option>
-          <option>Mexico</option><option>Netherlands</option><option>New Zealand</option>
-          <option>Philippines</option><option>Singapore</option><option>Spain</option>
-          <option>Taiwan</option><option>Thailand</option>
-          <option>United Kingdom</option><option>United States</option>
-          <option>Vietnam</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Postal Code</label>
-        <input type="text" id="intl-postal" placeholder="10001"/>
-      </div>
-
-      <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" id="intl-phone" placeholder="+1 555 000 0000" inputmode="tel"/>
-      </div>
+    <div class="rank-next">次のレベルまで 1,000pt / 1,000pt to next level</div>
+    <div class="rank-progress-bar">
+      <div class="rank-progress-fill"></div>
     </div>
+    <div class="rank-progress-label">3,000 / 4,000</div>
+    <a href="#" class="btn-rank-benefit">ランク特典を確認 / View Rank Benefits</a>
+  </div>
 
-    <!-- Form actions -->
-    <div style="display:flex; gap:10px; margin-top:8px;">
-      <button class="btn btn-outline" style="flex:1;" onclick="cancelNewForm()">キャンセル</button>
-      <button class="btn btn-primary" style="flex:1;" onclick="saveNewAddress()">住所を保存</button>
+  <!-- My Menu -->
+  <div class="my-menu-section">
+    <div class="my-menu-title">マイメニュー / My Menu</div>
+    <div class="menu-grid">
+      <a href="#" class="menu-tile">
+        <span class="menu-tile-icon">🎯</span>
+        <span class="menu-tile-label">クエスト</span>
+        <span class="menu-tile-label-sub">Quests</span>
+      </a>
+      <a href="#" class="menu-tile">
+        <span class="menu-tile-icon">📦</span>
+        <span class="menu-tile-label">獲得商品</span>
+        <span class="menu-tile-label-sub">My Loot</span>
+      </a>
+      <a href="#" class="menu-tile">
+        <span class="menu-tile-icon">🏆</span>
+        <span class="menu-tile-label">当選履歴</span>
+        <span class="menu-tile-label-sub">Winning History</span>
+      </a>
+      <a href="#" class="menu-tile">
+        <span class="menu-tile-icon">💳</span>
+        <span class="menu-tile-label">購入履歴</span>
+        <span class="menu-tile-label-sub">Purchase History</span>
+      </a>
+      <a href="#" class="menu-tile">
+        <span class="menu-tile-icon">👥</span>
+        <span class="menu-tile-label">友達を招待</span>
+        <span class="menu-tile-label-sub">Invite Friends</span>
+      </a>
+      <a href="faq.html" class="menu-tile">
+        <span class="menu-tile-icon">❓</span>
+        <span class="menu-tile-label">よくある質問</span>
+        <span class="menu-tile-label-sub">FAQ</span>
+      </a>
     </div>
   </div>
 
-</div><!-- /page -->
-
-<!-- ---- DELETE CONFIRM SHEET ---- -->
-<div class="confirm-overlay" id="deleteOverlay">
-  <div class="confirm-sheet">
-    <h3>住所を削除しますか？</h3>
-    <p>この住所を削除してもよろしいですか？<br/><em style="font-size:0.8em;">Delete this saved address? This cannot be undone.</em></p>
-    <div class="confirm-actions">
-      <button class="btn btn-outline" onclick="closeDeleteConfirm()">キャンセル</button>
-      <button class="btn btn-primary" style="background:var(--danger);" onclick="confirmDelete()">削除する</button>
+  <!-- Account List Section -->
+  <div class="section-title">アカウント / Account</div>
+  <a href="#" class="list-row">
+    <div class="row-left">
+      <span class="row-icon">👤</span>
+      <span class="row-label">アカウント情報編集 / Edit Account Info</span>
     </div>
-  </div>
+    <div class="row-right"><span class="chevron"></span></div>
+  </a>
+  <a href="#" class="list-row" onclick="event.preventDefault(); if(confirm('ログアウトしますか？')) window.location='registration.html'">
+    <div class="row-left">
+      <span class="row-icon">🚪</span>
+      <span class="row-label" style="color:var(--red);">ログアウト / Log Out</span>
+    </div>
+    <div class="row-right"><span class="chevron"></span></div>
+  </a>
+
+  <!-- Other Section -->
+  <div class="section-title">その他 / Other</div>
+  <a href="#" class="list-row">
+    <div class="row-left">
+      <span class="row-icon">📄</span>
+      <span class="row-label">利用規約 / Terms of Service</span>
+    </div>
+    <div class="row-right"><span class="chevron"></span></div>
+  </a>
+  <a href="#" class="list-row">
+    <div class="row-left">
+      <span class="row-icon">🔒</span>
+      <span class="row-label">プライバシーポリシー / Privacy Policy</span>
+    </div>
+    <div class="row-right"><span class="chevron"></span></div>
+  </a>
+  <a href="#" class="list-row">
+    <div class="row-left">
+      <span class="row-icon">📋</span>
+      <span class="row-label" style="font-size:0.82rem;">特定商取引法に基づく表記 / Specified Commercial Transactions</span>
+    </div>
+    <div class="row-right"><span class="chevron"></span></div>
+  </a>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-logo">
+      <div class="footer-logo-icon">🎴</div>
+      <div class="footer-logo-text">オリパロット / Oripalot</div>
+    </div>
+    <div class="footer-links">
+      <a href="#">会社概要</a>
+      <a href="#">運営について</a>
+      <a href="#">採用情報</a>
+      <a href="#">お問い合わせ</a>
+      <a href="#">利用規約</a>
+      <a href="#">プライバシーポリシー</a>
+    </div>
+    <div class="footer-social">
+      <div class="social-icon">🐦</div>
+      <div class="social-icon">📸</div>
+      <div class="social-icon" style="background:#06C755;">💬</div>
+      <div class="social-icon" style="background:#FF0000;">▶</div>
+    </div>
+    <div class="footer-legal">
+      © 2026 Oripalot Japan. All rights reserved.<br>
+      本サービスは18歳以上の方を対象としています。<br>
+      ゲームの仕組み上、払い戻し・返金はできません。
+    </div>
+  </footer>
+
 </div>
 
-<!-- ---- EDIT MODAL ---- -->
-<div class="edit-modal" id="editModal">
-  <div class="edit-modal-inner">
-    <div class="edit-modal-header">
-      <h3>住所を編集 Edit Address</h3>
-      <button class="btn-close" onclick="closeEditModal()">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-        </svg>
-      </button>
-    </div>
-    <!-- Editing the same Japan fields for the saved address -->
-    <div class="form-row">
-      <div class="form-group">
-        <label>姓 Last Name</label>
-        <input type="text" value="田中" id="edit-sei"/>
-      </div>
-      <div class="form-group">
-        <label>名 First Name</label>
-        <input type="text" value="花子" id="edit-mei"/>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>郵便番号 Postal Code</label>
-      <input type="text" value="150-0001" id="edit-postal"/>
-    </div>
-    <div class="form-group">
-      <label>都道府県 Prefecture</label>
-      <select id="edit-pref">
-        <option>北海道</option><option>青森県</option><option>岩手県</option>
-        <option>宮城県</option><option>秋田県</option><option>山形県</option>
-        <option>福島県</option><option>茨城県</option><option>栃木県</option>
-        <option>群馬県</option><option>埼玉県</option><option>千葉県</option>
-        <option selected>東京都</option><option>神奈川県</option><option>新潟県</option>
-        <option>富山県</option><option>石川県</option><option>福井県</option>
-        <option>山梨県</option><option>長野県</option><option>岐阜県</option>
-        <option>静岡県</option><option>愛知県</option><option>三重県</option>
-        <option>滋賀県</option><option>京都府</option><option>大阪府</option>
-        <option>兵庫県</option><option>奈良県</option><option>和歌山県</option>
-        <option>鳥取県</option><option>島根県</option><option>岡山県</option>
-        <option>広島県</option><option>山口県</option><option>徳島県</option>
-        <option>香川県</option><option>愛媛県</option><option>高知県</option>
-        <option>福岡県</option><option>佐賀県</option><option>長崎県</option>
-        <option>熊本県</option><option>大分県</option><option>宮崎県</option>
-        <option>鹿児島県</option><option>沖縄県</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>市区町村・番地</label>
-      <input type="text" value="渋谷区神宮前1丁目1番地" id="edit-city"/>
-    </div>
-    <div class="form-group">
-      <label>マンション・部屋番号 <span style="color:var(--text-dim);">(任意)</span></label>
-      <input type="text" value="コスモタワー 501号室" id="edit-apt"/>
-    </div>
-    <div class="form-group">
-      <label>電話番号</label>
-      <input type="tel" value="090-1234-5678" id="edit-phone"/>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:8px;">
-      <button class="btn btn-outline" style="flex:1;" onclick="closeEditModal()">キャンセル</button>
-      <button class="btn btn-primary" style="flex:1;" onclick="saveEdit()">保存する</button>
-    </div>
-  </div>
-</div>
-
+<script src="../assets/nav.js"></script>
 <script>
-  injectNav('account');
-
-  // ---- Tab switching ----
-  function switchTab(mode) {
-    document.getElementById('tabJP').classList.toggle('active', mode === 'jp');
-    document.getElementById('tabIntl').classList.toggle('active', mode === 'intl');
-    document.getElementById('panelJP').classList.toggle('active', mode === 'jp');
-    document.getElementById('panelIntl').classList.toggle('active', mode === 'intl');
-  }
-
-  // ---- Postal code formatting ----
-  function formatPostal(input) {
-    let v = input.value.replace(/\D/g, '').slice(0, 7);
-    if (v.length > 3) v = v.slice(0, 3) + '-' + v.slice(3);
-    input.value = v;
-  }
-
-  // ---- Simulated postal lookup ----
-  const POSTAL_DB = {
-    '150-0001': { pref: '東京都', city: '渋谷区神宮前' },
-    '100-0001': { pref: '東京都', city: '千代田区千代田' },
-    '530-0001': { pref: '大阪府', city: '大阪市北区梅田' },
-    '460-0001': { pref: '愛知県', city: '名古屋市中区三の丸' },
-    '060-0001': { pref: '北海道', city: '札幌市中央区北一条西' },
-    '220-0001': { pref: '神奈川県', city: '横浜市西区みなとみらい' },
-  };
-
-  function lookupAddress() {
-    const postal = document.getElementById('jp-postal').value;
-    const match = POSTAL_DB[postal];
-    if (match) {
-      const prefSelect = document.getElementById('jp-pref');
-      const opts = Array.from(prefSelect.options);
-      const opt = opts.find(o => o.value === match.pref || o.text === match.pref);
-      if (opt) prefSelect.value = opt.value || opt.text;
-      document.getElementById('jp-city').value = match.city;
-      showToast('住所が自動入力されました ✓', 'success');
-    } else {
-      showToast('郵便番号が見つかりません。試してみてください: 150-0001', 'warning');
-    }
-  }
-
-  // ---- Toggle new address form ----
-  function toggleNewForm() {
-    const wrap = document.getElementById('newFormWrap');
-    const btn = document.getElementById('addNewBtn');
-    const open = !wrap.classList.contains('open');
-    wrap.classList.toggle('open', open);
-    btn.style.display = open ? 'none' : 'flex';
-    if (open) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function cancelNewForm() {
-    document.getElementById('newFormWrap').classList.remove('open');
-    document.getElementById('addNewBtn').style.display = 'flex';
-  }
-
-  // ---- Save new address ----
-  function saveNewAddress() {
-    const isJP = document.getElementById('panelJP').classList.contains('active');
-    let valid = true;
-    let name = '', detail = '';
-
-    if (isJP) {
-      const sei = document.getElementById('jp-sei').value.trim();
-      const mei = document.getElementById('jp-mei').value.trim();
-      const postal = document.getElementById('jp-postal').value.trim();
-      const pref = document.getElementById('jp-pref').value;
-      const city = document.getElementById('jp-city').value.trim();
-      const street = document.getElementById('jp-street').value.trim();
-      if (!sei || !mei || !postal || !pref || !city || !street) valid = false;
-      name = `${sei} ${mei}`;
-      const apt = document.getElementById('jp-apt').value.trim();
-      detail = `〒${postal}\n${pref}${city}${street}${apt ? ' ' + apt : ''}`;
-    } else {
-      const first = document.getElementById('intl-first').value.trim();
-      const last = document.getElementById('intl-last').value.trim();
-      const country = document.getElementById('intl-country').value;
-      const street = document.getElementById('intl-street').value.trim();
-      if (!first || !last || !country || !street) valid = false;
-      name = `${first} ${last}`;
-      detail = `${street}, ${document.getElementById('intl-state').value}, ${country} ${document.getElementById('intl-postal').value}`;
-    }
-
-    if (!valid) {
-      showToast('必須項目を入力してください。', 'danger');
-      return;
-    }
-
-    // Append new address card
-    const container = document.getElementById('savedAddressesContainer');
-    const id = 'addr-' + Date.now();
-    const card = document.createElement('div');
-    card.className = 'address-card';
-    card.id = id;
-    card.innerHTML = `
-      <div class="addr-name">${name}</div>
-      <div class="addr-detail" style="white-space:pre-line;">${detail}</div>
-      <div class="addr-actions">
-        <button class="btn-sm btn-sm-outline" onclick="showToast('編集モーダルを開いています…', 'info')">✏️ 編集 Edit</button>
-        <button class="btn-sm btn-sm-danger" onclick="this.closest('.address-card').remove(); showToast('住所を削除しました。', 'success')">🗑️ 削除 Delete</button>
-      </div>`;
-    container.appendChild(card);
-
-    cancelNewForm();
-    showToast('住所を保存しました ✓', 'success');
-  }
-
-  // ---- Delete confirm flow ----
-  function openDeleteConfirm() {
-    document.getElementById('deleteOverlay').classList.add('open');
-  }
-  function closeDeleteConfirm() {
-    document.getElementById('deleteOverlay').classList.remove('open');
-  }
-  function confirmDelete() {
-    document.getElementById('addr-1').remove();
-    closeDeleteConfirm();
-    showToast('住所を削除しました。', 'success');
-    document.getElementById('addNewBtn').style.display = 'flex';
-  }
-
-  // ---- Edit modal flow ----
-  function openEditModal() {
-    document.getElementById('editModal').classList.add('open');
-  }
-  function closeEditModal() {
-    document.getElementById('editModal').classList.remove('open');
-  }
-  function saveEdit() {
-    const sei = document.getElementById('edit-sei').value.trim();
-    const mei = document.getElementById('edit-mei').value.trim();
-    const postal = document.getElementById('edit-postal').value.trim();
-    const pref = document.getElementById('edit-pref').value;
-    const city = document.getElementById('edit-city').value.trim();
-    const apt = document.getElementById('edit-apt').value.trim();
-
-    const card = document.getElementById('addr-1');
-    card.querySelector('.addr-name').textContent = `${sei} ${mei}`;
-    card.querySelector('.addr-detail').innerHTML =
-      `〒${postal}<br/>${pref}${city}${apt ? ' ' + apt : ''}`;
-
-    closeEditModal();
-    showToast('住所を更新しました ✓', 'success');
-  }
+  injectNav('mypage', true);
 </script>
 </body>
 </html>

@@ -3,913 +3,631 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Oripalot — KYC Verification</title>
+  <title>Oripalot — 本人確認 (KYC)</title>
   <link rel="stylesheet" href="../assets/style.css"/>
   <style>
-    /* ---- Step overrides ---- */
-    .steps { margin-bottom: 32px; }
-    .step::after { top: 13px; }
-
-    /* ---- Screen panels ---- */
-    .kyc-screen { display: none; }
-    .kyc-screen.active { display: block; }
-
-    /* ---- Trigger banner ---- */
-    .trigger-banner {
-      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(245,158,11,0.1));
-      border: 1px solid rgba(124,58,237,0.35);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 24px;
-      text-align: center;
+    /* ---- Back row ---- */
+    .back-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
     }
-    .trigger-banner .trigger-icon {
-      font-size: 2.5rem;
+    .back-row a { text-decoration: none; color: var(--text); display:flex; align-items:center; gap:8px; }
+    .back-row .back-arrow { font-size: 1.1rem; }
+
+    /* ---- Screen sections (shown/hidden) ---- */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ---- KYC Trigger card ---- */
+    .kyc-alert-card {
+      border: 2px solid var(--red);
+      border-radius: var(--radius);
+      background: var(--white);
+      padding: 16px;
+      margin: 12px 16px;
+    }
+    .kyc-alert-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .kyc-alert-text {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .kyc-benefits-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin: 0 16px 12px;
+    }
+    .kyc-benefits-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
       margin-bottom: 10px;
     }
-    .trigger-banner h2 { margin-bottom: 6px; }
-    .trigger-banner p { font-size: 0.85rem; }
-
-    .trigger-reason-list {
-      list-style: none;
-      margin: 16px 0;
-      text-align: left;
-    }
-    .trigger-reason-list li {
+    .kyc-benefit-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 10px 14px;
-      background: var(--bg-input);
-      border-radius: var(--radius-sm);
       margin-bottom: 8px;
-      font-size: 0.88rem;
-      color: var(--text);
+      font-size: 0.82rem;
+      color: var(--text-muted);
     }
-    .trigger-reason-list li .reason-icon { font-size: 1.1rem; flex-shrink: 0; }
-    .trigger-reason-list li .reason-amount { font-weight: 700; color: var(--accent-gold); }
+    .kyc-benefit-row .benefit-icon { font-size: 1.1rem; }
+    .kyc-benefit-row strong { color: var(--text); }
+    .kyc-timeline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      margin-top: 8px;
+    }
 
-    /* ---- Age buttons ---- */
-    .age-choice {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-      margin: 24px 0;
-    }
-    .age-btn {
-      padding: 22px 16px;
-      border-radius: var(--radius);
-      border: 2px solid var(--border);
-      background: var(--bg-card);
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-align: center;
-      transition: all 0.2s;
-    }
-    .age-btn:hover { border-color: var(--accent); }
-    .age-btn .age-emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
-    .age-btn.yes:hover { border-color: var(--success); background: rgba(16,185,129,0.08); }
-    .age-btn.no:hover  { border-color: var(--warning); background: rgba(245,158,11,0.08); }
-
-    /* ---- Doc type grid ---- */
+    /* ---- Document type grid ---- */
     .doc-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 20px 0;
+      gap: 10px;
+      padding: 0 16px;
     }
     .doc-card {
-      background: var(--bg-card);
+      background: var(--white);
       border: 2px solid var(--border);
       border-radius: var(--radius);
-      padding: 18px 14px;
+      padding: 16px 10px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .doc-card:hover, .doc-card.selected {
-      border-color: var(--accent);
-      background: rgba(124,58,237,0.08);
-    }
-    .doc-card .doc-icon { font-size: 1.8rem; margin-bottom: 8px; }
-    .doc-card .doc-name { font-size: 0.82rem; font-weight: 700; margin-bottom: 4px; }
-    .doc-card .doc-desc { font-size: 0.7rem; color: var(--text-dim); line-height: 1.4; }
+    .doc-card:hover { border-color: #ccc; }
+    .doc-card.selected { border-color: var(--red); box-shadow: 0 0 0 3px rgba(232,0,45,0.08); }
+    .doc-card-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .doc-card-label { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+    .doc-card-sub   { font-size: 0.68rem; color: var(--text-dim); margin-top: 3px; }
 
     /* ---- Upload zone ---- */
     .upload-zone {
-      border: 2px dashed var(--border);
+      border: 2px dashed var(--border-input);
       border-radius: var(--radius);
-      padding: 28px 20px;
+      padding: 28px 16px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-bottom: 16px;
+      background: var(--bg);
+      margin-bottom: 12px;
+      transition: border-color 0.15s, background 0.15s;
       position: relative;
     }
-    .upload-zone:hover, .upload-zone.has-file {
-      border-color: var(--accent);
-      background: rgba(124,58,237,0.05);
+    .upload-zone:hover { border-color: var(--red); background: #fff; }
+    .upload-zone.has-file { border-color: var(--success); background: #E8F8EF; }
+    .upload-zone input[type=file] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
     }
-    .upload-zone .upload-icon { font-size: 2.2rem; margin-bottom: 10px; }
-    .upload-zone .upload-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
-    .upload-zone .upload-sub { font-size: 0.78rem; color: var(--text-dim); }
-    .upload-zone input[type="file"] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-    .upload-zone .preview-thumb {
-      display: none;
-      width: 100%; max-height: 140px;
-      object-fit: cover;
+    .upload-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .upload-label { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .upload-hint  { font-size: 0.72rem; color: var(--text-dim); margin-top: 4px; }
+    .upload-preview {
+      max-width: 100%; max-height: 120px;
       border-radius: var(--radius-sm);
-      margin-top: 10px;
-    }
-    .upload-zone.has-file .preview-thumb { display: block; }
-    .upload-zone .file-name {
-      display: none;
-      font-size: 0.8rem;
-      color: var(--success);
-      font-weight: 600;
       margin-top: 8px;
+      display: none;
     }
-    .upload-zone.has-file .file-name { display: block; }
-    .upload-zone.has-file .upload-title { color: var(--success); }
 
-    /* ---- Camera UI ---- */
-    .camera-frame {
-      background: #000;
-      border-radius: var(--radius);
-      border: 2px solid var(--border);
-      aspect-ratio: 4/3;
+    /* ---- Selfie camera frame ---- */
+    .selfie-frame {
+      margin: 16px auto;
+      width: 200px; height: 240px;
+      border: 3px dashed var(--border);
+      border-radius: 50% / 45%;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
+      font-size: 3rem;
+      background: var(--bg);
       position: relative;
       overflow: hidden;
     }
-    .camera-frame .camera-overlay {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      color: rgba(255,255,255,0.7);
+    .selfie-frame.captured {
+      border-color: var(--success);
+      background: #E8F8EF;
     }
-    .camera-frame .face-guide {
-      width: 140px; height: 160px;
-      border: 3px solid rgba(124,58,237,0.8);
-      border-radius: 50%;
-      position: relative;
-    }
-    .camera-frame .face-guide::before {
-      content: '👤';
-      font-size: 3.5rem;
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0.4;
-    }
-    .camera-frame .cam-hint {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.6);
+    .selfie-instructions {
+      font-size: 0.82rem;
+      color: var(--text-muted);
       text-align: center;
-      max-width: 200px;
-    }
-    .camera-frame.captured { border-color: var(--success); }
-    .camera-frame.captured .camera-overlay { background: rgba(0,0,0,0.5); }
-    .capture-flash {
-      position: absolute;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      border-radius: var(--radius);
+      margin: 0 16px 12px;
+      line-height: 1.6;
     }
 
     /* ---- Processing spinner ---- */
-    .processing-wrap {
+    .spinner-wrap {
       text-align: center;
-      padding: 40px 0;
+      padding: 48px 20px;
     }
     .spinner {
-      width: 60px; height: 60px;
+      width: 56px; height: 56px;
       border: 4px solid var(--border);
-      border-top-color: var(--accent);
+      border-top-color: var(--red);
       border-radius: 50%;
       animation: spin 0.9s linear infinite;
       margin: 0 auto 20px;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .processing-steps-list {
-      list-style: none;
-      margin-top: 24px;
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
-    .processing-steps-list li {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.85rem;
+    .processing-text {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .processing-sub {
+      font-size: 0.82rem;
       color: var(--text-muted);
     }
-    .processing-steps-list li.done { color: var(--success); }
-    .processing-steps-list li .check { width: 18px; height: 18px; flex-shrink: 0; }
 
     /* ---- Success screen ---- */
     .success-wrap {
       text-align: center;
-      padding: 20px 0;
+      padding: 40px 20px 24px;
     }
-    .success-icon-ring {
-      width: 80px; height: 80px;
+    .success-check {
+      width: 72px; height: 72px;
+      background: var(--success);
       border-radius: 50%;
-      background: rgba(16,185,129,0.15);
-      border: 2px solid var(--success);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
       font-size: 2.2rem;
+      color: white;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 16px rgba(39,174,96,0.3);
     }
-    .reward-box {
-      background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(124,58,237,0.1));
-      border: 1px solid rgba(245,158,11,0.4);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin: 20px 0;
-      display: flex;
+    .success-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .success-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .coin-reward {
+      display: inline-flex;
       align-items: center;
-      gap: 14px;
-    }
-    .reward-box .reward-icon { font-size: 2rem; flex-shrink: 0; }
-    .reward-box .reward-text { text-align: left; }
-    .reward-box .reward-amount { font-size: 1.4rem; font-weight: 700; color: var(--accent-gold); }
-    .reward-box .reward-label { font-size: 0.78rem; color: var(--text-muted); }
-
-    /* ---- Guardian form ---- */
-    .guardian-wrap {
-      display: none;
-      background: rgba(245,158,11,0.06);
-      border: 1px solid rgba(245,158,11,0.3);
+      gap: 8px;
+      background: #FFF8E7;
+      border: 1px solid var(--gold);
       border-radius: var(--radius);
-      padding: 20px;
-      margin-top: 16px;
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 24px;
     }
-    .guardian-wrap.open { display: block; }
 
-    /* ---- Under-18 screen ---- */
-    .under18-screen { display: none; }
-    .under18-screen.active { display: block; }
-
-    /* ---- Info list ---- */
-    .info-list { list-style: none; margin: 12px 0; }
-    .info-list li {
-      display: flex; gap: 10px; align-items: flex-start;
-      font-size: 0.85rem; color: var(--text-muted);
-      padding: 8px 0; border-bottom: 1px solid var(--border);
+    /* ---- Under-18 form ---- */
+    .guardian-intro {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
     }
-    .info-list li:last-child { border-bottom: none; }
-    .info-list li .il-icon { flex-shrink: 0; margin-top: 2px; }
+
+    /* ---- Shared page content padding ---- */
+    .kyc-content { padding: 0 0 16px; }
+    .kyc-section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      padding: 16px 16px 12px;
+    }
+    .kyc-section-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 0 16px 12px;
+    }
+
+    /* ---- Age confirm buttons ---- */
+    .age-btn-wrap {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-age-yes {
+      display: block;
+      width: 100%;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+    }
+    .btn-age-no {
+      display: block;
+      width: 100%;
+      background: var(--white);
+      color: var(--text);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+    }
+    .btn-age-no:hover { border-color: var(--red); color: var(--red); }
+
+    /* ---- Primary button ---- */
+    .btn-primary {
+      display: block;
+      width: calc(100% - 32px);
+      margin: 16px 16px 0;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: var(--font);
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    .btn-primary:hover { background: var(--red-dark); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ---- Under-18 link ---- */
+    .under18-link {
+      display: block;
+      text-align: center;
+      margin: 12px 16px 0;
+      font-size: 0.82rem;
+      color: var(--red);
+      text-decoration: underline;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-<script src="../assets/nav.js"></script>
-
 <div class="page">
 
-  <!-- ========================================
-       SCREEN 0 — TRIGGER
-  ========================================= -->
-  <div class="kyc-screen active" id="screen-0">
-
-    <div class="trigger-banner">
-      <div class="trigger-icon">🔐</div>
-      <h2>本人確認が必要です</h2>
-      <p style="color:var(--text-muted);">KYC Verification Required</p>
-    </div>
-
-    <div class="alert alert-info" style="margin-bottom:20px;">
-      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:1px;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <span>以下のいずれかの条件に達したため、本人確認が必要です。<br/><em style="opacity:0.8; font-size:0.8em;">KYC is required because you have reached one of the thresholds below.</em></span>
-    </div>
-
-    <ul class="trigger-reason-list">
-      <li>
-        <span class="reason-icon">💳</span>
-        <div>
-          <div>累計入金額が <span class="reason-amount">¥50,000</span> を超えました</div>
-          <div style="font-size:0.75rem; color:var(--text-dim);">Total deposits reached ¥50,000</div>
-        </div>
-      </li>
-      <li>
-        <span class="reason-icon">🎁</span>
-        <div>
-          <div>コイン換算 <span class="reason-amount">¥50,000+</span> 相当の景品交換をリクエスト</div>
-          <div style="font-size:0.75rem; color:var(--text-dim);">Prize conversion request worth ¥50,000+ in coins</div>
-        </div>
-      </li>
-    </ul>
-
-    <ul class="info-list">
-      <li>
-        <span class="il-icon">⏱️</span>
-        <span>審査は通常 <strong>1〜2営業日</strong> で完了します。<br/><em style="font-size:0.78em;">Review takes 1–2 business days.</em></span>
-      </li>
-      <li>
-        <span class="il-icon">🪙</span>
-        <span>KYC完了で <strong style="color:var(--accent-gold);">+500 Oripa Coins</strong> をプレゼント！<br/><em style="font-size:0.78em;">Earn 500 Oripa Coins upon completion.</em></span>
-      </li>
-      <li>
-        <span class="il-icon">🔒</span>
-        <span>個人情報は安全に暗号化されます。<br/><em style="font-size:0.78em;">Your data is encrypted and secure.</em></span>
-      </li>
-    </ul>
-
-    <button class="btn btn-primary mt-24" onclick="startKYC()">
-      本人確認を開始する · Start KYC
-    </button>
-
-  </div><!-- /screen-0 -->
-
-  <!-- ========================================
-       SCREEN 1 — AGE CONFIRMATION
-  ========================================= -->
-  <div class="kyc-screen" id="screen-1">
-    <div id="stepsBar1"></div>
-
-    <div class="section-header">
-      <h2>年齢確認 Age Confirmation</h2>
-      <p style="margin-top:6px;">18歳以上ですか？ / Are you 18 or over?</p>
-    </div>
-
-    <div class="age-choice">
-      <button class="age-btn yes" onclick="ageAnswer(true)">
-        <span class="age-emoji">✅</span>
-        はい<br/><span style="font-size:0.75rem; font-weight:400; color:var(--text-muted);">Yes, I'm 18+</span>
-      </button>
-      <button class="age-btn no" onclick="ageAnswer(false)">
-        <span class="age-emoji">❌</span>
-        いいえ<br/><span style="font-size:0.75rem; font-weight:400; color:var(--text-muted);">No, under 18</span>
-      </button>
-    </div>
-
-    <!-- Under-18 flow -->
-    <div class="under18-screen" id="under18Screen">
-      <div class="alert alert-warning">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-        </svg>
-        <span>18歳未満の方は、法定代理人（保護者）によるKYC手続きが必要です。<br/><em style="font-size:0.8em;">Users under 18 must have a legal guardian complete KYC on their behalf.</em></span>
-      </div>
-
-      <h3 style="margin-bottom:14px;">法定代理人情報 Guardian Details</h3>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>保護者 姓 Last Name</label>
-          <input type="text" id="g-sei" placeholder="田中"/>
-        </div>
-        <div class="form-group">
-          <label>保護者 名 First Name</label>
-          <input type="text" id="g-mei" placeholder="太郎"/>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>保護者 メールアドレス Email</label>
-        <input type="email" id="g-email" placeholder="guardian@example.com"/>
-      </div>
-      <div class="form-group">
-        <label>保護者 電話番号 Phone</label>
-        <input type="tel" id="g-phone" placeholder="090-0000-0000"/>
-      </div>
-      <div class="form-group">
-        <label>続柄 Relationship</label>
-        <select id="g-rel">
-          <option value="">選択してください…</option>
-          <option>父 Father</option>
-          <option>母 Mother</option>
-          <option>祖父 Grandfather</option>
-          <option>祖母 Grandmother</option>
-          <option>その他 Other</option>
-        </select>
-      </div>
-
-      <div class="form-group" style="margin-top:8px;">
-        <label>同意書アップロード Consent Letter Upload</label>
-        <div class="upload-zone" id="guardianUploadZone">
-          <input type="file" id="guardianFileInput" accept=".pdf,.jpg,.jpeg,.png"
-                 onchange="handleFileUpload(this, 'guardianUploadZone', 'guardianFileName')"/>
-          <div class="upload-icon">📄</div>
-          <div class="upload-title">署名済み同意書</div>
-          <div class="upload-sub">Signed consent letter (PDF, JPG, PNG)</div>
-          <div class="file-name" id="guardianFileName"></div>
-        </div>
-        <span class="hint">保護者が署名した同意書をアップロードしてください。</span>
-      </div>
-
-      <button class="btn btn-primary mt-16" onclick="submitGuardian()">
-        保護者KYCを提出する · Submit Guardian KYC
-      </button>
-    </div>
-
-  </div><!-- /screen-1 -->
-
-  <!-- ========================================
-       SCREEN 2 — DOCUMENT SELECTION
-  ========================================= -->
-  <div class="kyc-screen" id="screen-2">
-    <div id="stepsBar2"></div>
-
-    <div class="section-header">
-      <h2>書類の種類を選択 Select ID Type</h2>
-      <p style="margin-top:6px;">本人確認に使用する証明書を選んでください。</p>
-    </div>
-
-    <div class="doc-grid">
-      <div class="doc-card" id="doc-mynumber" onclick="selectDoc('mynumber', true)">
-        <div class="doc-icon">🪪</div>
-        <div class="doc-name">マイナンバーカード</div>
-        <div class="doc-desc">My Number Card<br/>表裏両面が必要</div>
-      </div>
-      <div class="doc-card" id="doc-license" onclick="selectDoc('license', true)">
-        <div class="doc-icon">🚗</div>
-        <div class="doc-name">運転免許証</div>
-        <div class="doc-desc">Driver's License<br/>表裏両面が必要</div>
-      </div>
-      <div class="doc-card" id="doc-passport" onclick="selectDoc('passport', false)">
-        <div class="doc-icon">🛂</div>
-        <div class="doc-name">パスポート</div>
-        <div class="doc-desc">Passport<br/>顔写真ページのみ</div>
-      </div>
-      <div class="doc-card" id="doc-residence" onclick="selectDoc('residence', true)">
-        <div class="doc-icon">🏠</div>
-        <div class="doc-name">在留カード</div>
-        <div class="doc-desc">Residence Card<br/>表裏両面が必要</div>
-      </div>
-    </div>
-
-    <div id="docSelectedHint" style="display:none;" class="alert alert-info">
-      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-      </svg>
-      <span id="docSelectedText"></span>
-    </div>
-
-    <button class="btn btn-primary mt-16" id="btnNextDoc" style="display:none;" onclick="goToStep(3)">
-      次へ · Next
-    </button>
-
-  </div><!-- /screen-2 -->
-
-  <!-- ========================================
-       SCREEN 3 — DOCUMENT UPLOAD
-  ========================================= -->
-  <div class="kyc-screen" id="screen-3">
-    <div id="stepsBar3"></div>
-
-    <div class="section-header">
-      <h2>書類をアップロード Upload ID</h2>
-      <p style="margin-top:6px;">鮮明な写真をアップロードしてください。文字がはっきり読めることを確認してください。</p>
-    </div>
-
-    <!-- Front -->
-    <div class="form-group" style="margin-bottom:20px;">
-      <label>表面 Front Side</label>
-      <div class="upload-zone" id="frontZone">
-        <input type="file" id="frontFileInput" accept="image/*"
-               onchange="handleFileUpload(this, 'frontZone', 'frontFileName')"/>
-        <div class="upload-icon">📷</div>
-        <div class="upload-title">表面をアップロード</div>
-        <div class="upload-sub">Tap to upload front of ID</div>
-        <img class="preview-thumb" id="frontPreview" alt="Front preview"/>
-        <div class="file-name" id="frontFileName"></div>
-      </div>
-    </div>
-
-    <!-- Back (hidden for passport) -->
-    <div class="form-group" id="backUploadGroup" style="margin-bottom:20px;">
-      <label>裏面 Back Side</label>
-      <div class="upload-zone" id="backZone">
-        <input type="file" id="backFileInput" accept="image/*"
-               onchange="handleFileUpload(this, 'backZone', 'backFileName')"/>
-        <div class="upload-icon">📷</div>
-        <div class="upload-title">裏面をアップロード</div>
-        <div class="upload-sub">Tap to upload back of ID</div>
-        <img class="preview-thumb" id="backPreview" alt="Back preview"/>
-        <div class="file-name" id="backFileName"></div>
-      </div>
-    </div>
-
-    <div class="alert alert-warning">
-      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-      </svg>
-      <span style="font-size:0.8rem;">書類全体が写真に収まり、四隅が見えることを確認してください。<br/><em>Ensure all corners are visible and text is clearly legible.</em></span>
-    </div>
-
-    <button class="btn btn-primary mt-16" onclick="proceedFromUpload()">
-      次へ · Next
-    </button>
-
-  </div><!-- /screen-3 -->
-
-  <!-- ========================================
-       SCREEN 4 — SELFIE / FACE MATCH
-  ========================================= -->
-  <div class="kyc-screen" id="screen-4">
-    <div id="stepsBar4"></div>
-
-    <div class="section-header">
-      <h2>顔写真の撮影 Selfie</h2>
-      <p style="margin-top:6px;">書類を持ちながら正面を向いて撮影してください。</p>
-    </div>
-
-    <div class="camera-frame" id="cameraFrame">
-      <div class="camera-overlay" id="cameraOverlay">
-        <div class="face-guide"></div>
-        <div class="cam-hint">書類を胸元に持ち、顔がガイドの中に収まるようにしてください<br/><em style="font-size:0.7em;">Hold your ID to your chest, face inside the oval</em></div>
-      </div>
-      <div class="capture-flash" id="captureFlash"></div>
-    </div>
-
-    <ul class="info-list" style="margin-bottom:20px;">
-      <li><span class="il-icon">💡</span><span>明るい場所で撮影してください。<br/><em style="font-size:0.78em;">Good lighting is important.</em></span></li>
-      <li><span class="il-icon">🕶️</span><span>サングラスや帽子は外してください。<br/><em style="font-size:0.78em;">Remove glasses and hats.</em></span></li>
-      <li><span class="il-icon">📄</span><span>本人確認書類を正面に向けてください。<br/><em style="font-size:0.78em;">Hold your ID facing forward.</em></span></li>
-    </ul>
-
-    <button class="btn btn-primary" id="btnCapture" onclick="capturePhoto()">
-      📸 撮影する · Take Photo
-    </button>
-
-    <button class="btn btn-outline mt-16" id="btnRetake" style="display:none;" onclick="retakePhoto()">
-      撮り直す · Retake
-    </button>
-
-    <button class="btn btn-gold mt-16" id="btnSubmitSelfie" style="display:none;" onclick="goToStep(5)">
-      この写真で提出する · Submit
-    </button>
-
-  </div><!-- /screen-4 -->
-
-  <!-- ========================================
-       SCREEN 5 — PROCESSING
-  ========================================= -->
-  <div class="kyc-screen" id="screen-5">
-    <div class="processing-wrap">
-      <div class="spinner" id="spinner"></div>
-      <h2 id="processingTitle">本人確認中…</h2>
-      <p id="processingSubtitle">Verifying your identity. Please wait.</p>
-
-      <ul class="processing-steps-list" id="processingList">
-        <li id="proc-1">
-          <svg class="check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke-width="2"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/>
-          </svg>
-          書類の確認 · Checking document…
-        </li>
-        <li id="proc-2">
-          <svg class="check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke-width="2"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/>
-          </svg>
-          顔認証 · Face matching…
-        </li>
-        <li id="proc-3">
-          <svg class="check" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" stroke-width="2"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/>
-          </svg>
-          データの暗号化 · Encrypting data…
-        </li>
-      </ul>
-    </div>
-  </div><!-- /screen-5 -->
-
-  <!-- ========================================
-       SCREEN 6 — SUCCESS
-  ========================================= -->
-  <div class="kyc-screen" id="screen-6">
-    <div id="stepsBar6"></div>
-
-    <div class="success-wrap">
-      <div class="success-icon-ring">✅</div>
-      <h2 style="margin-bottom:8px;">提出完了！</h2>
-      <p style="font-size:0.9rem; margin-bottom:4px;">KYC Submitted — Under Review</p>
-      <p style="font-size:0.82rem;">本人確認書類を受け付けました。審査結果はメールでお知らせします。<br/><em>We've received your documents. You'll be notified by email.</em></p>
-    </div>
-
-    <div class="alert alert-info" style="margin-bottom:16px;">
-      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-      </svg>
-      <span style="font-size:0.85rem;">審査は通常 <strong>1〜2営業日</strong> で完了します。<br/>Verification usually takes <strong>1–2 business days</strong>.</span>
-    </div>
-
-    <div class="reward-box">
-      <div class="reward-icon">🪙</div>
-      <div class="reward-text">
-        <div class="reward-amount">+500 Oripa Coins</div>
-        <div class="reward-label">KYC完了ボーナス · KYC completion reward<br/>審査通過後に付与されます。Awarded after approval.</div>
-      </div>
-    </div>
-
-    <ul class="info-list" style="margin-bottom:24px;">
-      <li><span class="il-icon">📧</span><span>審査結果はご登録のメールアドレスにお送りします。<br/><em style="font-size:0.78em;">Results sent to your registered email.</em></span></li>
-      <li><span class="il-icon">⏳</span><span>審査中もオリパの購入・開封は引き続き可能です。<br/><em style="font-size:0.78em;">You can still open oripa packs during review.</em></span></li>
-    </ul>
-
-    <a href="../index.html" class="btn btn-primary">
-      ホームに戻る · Back to Home
+  <!-- Back row -->
+  <div class="back-row">
+    <a href="profile.html">
+      <span class="back-arrow">←</span>
+      <span>本人確認 / Identity Verification</span>
     </a>
-    <button class="btn btn-outline mt-16" onclick="resetKYC()" style="font-size:0.82rem; color:var(--text-dim);">
-      最初からやり直す · Restart (demo)
+  </div>
+
+  <!-- Step Indicator -->
+  <div class="steps" id="step-indicator">
+    <div class="step" id="si-1">
+      <div class="step-dot">1</div>
+      <div class="step-label">本人確認</div>
+    </div>
+    <div class="step" id="si-2">
+      <div class="step-dot">2</div>
+      <div class="step-label">書類選択</div>
+    </div>
+    <div class="step" id="si-3">
+      <div class="step-dot">3</div>
+      <div class="step-label">アップロード</div>
+    </div>
+    <div class="step" id="si-4">
+      <div class="step-dot">4</div>
+      <div class="step-label">完了</div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: TRIGGER ===================== -->
+  <div class="screen active" id="screen-trigger">
+    <div class="kyc-alert-card">
+      <div class="kyc-alert-title">⚠️ 本人確認が必要です<br><small style="font-size:0.75rem;font-weight:400;">Identity Verification Required</small></div>
+      <div class="kyc-alert-text">累計入金額が50,000円を超えたため、本人確認が必要です。<br><span style="color:#999;font-size:0.78rem;">Identity verification is required as your total deposits exceeded ¥50,000.</span></div>
+    </div>
+
+    <div class="kyc-benefits-card">
+      <div class="kyc-benefits-title">本人確認を完了すると / Complete KYC to receive:</div>
+      <div class="kyc-benefit-row">
+        <span class="benefit-icon">🟡</span>
+        <div><strong>+500 オリパコイン</strong>をプレゼント<br><span style="font-size:0.72rem;color:#999;">+500 Oripa Coins reward</span></div>
+      </div>
+      <div class="kyc-benefit-row">
+        <span class="benefit-icon">🔓</span>
+        <div><strong>入金制限の解除</strong><br><span style="font-size:0.72rem;color:#999;">Deposit limit lifted</span></div>
+      </div>
+      <div class="kyc-timeline">
+        🕐 審査期間：1〜2営業日 / Review: 1-2 business days
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="showScreen('screen-age')">
+      本人確認を開始する / Start Verification
     </button>
+    <span class="under18-link" onclick="showScreen('screen-under18')">
+      18歳未満の方はこちら / Under 18? Click here
+    </span>
+  </div>
 
-  </div><!-- /screen-6 -->
+  <!-- ===================== SCREEN: UNDER-18 ===================== -->
+  <div class="screen" id="screen-under18">
+    <div class="guardian-intro">
+      <strong>18歳未満の方へ</strong><br>
+      未成年の方の本人確認は、保護者の方が手続きを行う必要があります。以下のフォームに保護者の方の情報をご入力ください。<br><br>
+      <em style="font-size:0.78rem;color:#999;">For users under 18, a parent or guardian must complete KYC. Please fill in their details below.</em>
+    </div>
 
-</div><!-- /page -->
+    <div class="kyc-content">
+      <div style="padding: 0 16px;">
+        <div class="form-group">
+          <label>保護者氏名 <span class="required">*</span><br><span style="font-size:0.72rem;font-weight:400;color:#999;">Guardian Full Name</span></label>
+          <input type="text" placeholder="山田 花子"/>
+        </div>
+        <div class="form-group">
+          <label>続柄 <span class="required">*</span><br><span style="font-size:0.72rem;font-weight:400;color:#999;">Relationship</span></label>
+          <select>
+            <option value="">選択してください / Please select</option>
+            <option>父 / Father</option>
+            <option>母 / Mother</option>
+            <option>その他 / Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>メールアドレス <span class="required">*</span><br><span style="font-size:0.72rem;font-weight:400;color:#999;">Email</span></label>
+          <input type="email" placeholder="guardian@example.com"/>
+        </div>
+        <div class="form-group">
+          <label>電話番号 <span class="required">*</span><br><span style="font-size:0.72rem;font-weight:400;color:#999;">Phone Number</span></label>
+          <input type="tel" placeholder="090-0000-0000"/>
+        </div>
+        <div class="form-group">
+          <label>同意書（署名済み） <span class="required">*</span><br><span style="font-size:0.72rem;font-weight:400;color:#999;">Signed Consent Letter (PDF or image)</span></label>
+          <div class="upload-zone" id="guardian-upload">
+            <input type="file" accept=".pdf,image/*" onchange="handleGuardianUpload(this)"/>
+            <span class="upload-icon">📎</span>
+            <div class="upload-label">ファイルをアップロード</div>
+            <div class="upload-hint">PDF・JPG・PNG 対応 / Max 10MB</div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="showToast('送信しました。審査まで1〜2営業日お待ちください。', 'success'); setTimeout(()=>window.location='profile.html',2000)">
+        送信する / Submit
+      </button>
+      <span class="under18-link" onclick="showScreen('screen-trigger')" style="color:var(--text-muted);">← 戻る / Back</span>
+    </div>
+  </div>
 
+  <!-- ===================== SCREEN: AGE CONFIRM ===================== -->
+  <div class="screen" id="screen-age">
+    <div class="kyc-section-title">18歳以上ですか？<br><span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);">Are you 18 or over?</span></div>
+    <div class="age-btn-wrap">
+      <button class="btn-age-yes" onclick="updateStep(2); showScreen('screen-doc')">
+        はい（18歳以上） / Yes, I am 18+
+      </button>
+      <button class="btn-age-no" onclick="showScreen('screen-under18')">
+        いいえ（18歳未満） / No, I am under 18
+      </button>
+    </div>
+    <span class="under18-link" onclick="showScreen('screen-trigger')" style="color:var(--text-muted);margin-top:16px;">← 戻る / Back</span>
+  </div>
+
+  <!-- ===================== SCREEN: DOCUMENT SELECT ===================== -->
+  <div class="screen" id="screen-doc">
+    <div class="kyc-section-title">書類を選択してください<br><span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);">Select your document type</span></div>
+    <div class="doc-grid">
+      <div class="doc-card" onclick="selectDoc(this, 'mynumber')">
+        <span class="doc-card-icon">🪪</span>
+        <div class="doc-card-label">マイナンバーカード</div>
+        <div class="doc-card-sub">My Number Card</div>
+      </div>
+      <div class="doc-card" onclick="selectDoc(this, 'license')">
+        <span class="doc-card-icon">🚗</span>
+        <div class="doc-card-label">運転免許証</div>
+        <div class="doc-card-sub">Driver's License</div>
+      </div>
+      <div class="doc-card" onclick="selectDoc(this, 'passport')">
+        <span class="doc-card-icon">📘</span>
+        <div class="doc-card-label">パスポート</div>
+        <div class="doc-card-sub">Passport</div>
+      </div>
+      <div class="doc-card" onclick="selectDoc(this, 'residence')">
+        <span class="doc-card-icon">🏠</span>
+        <div class="doc-card-label">在留カード</div>
+        <div class="doc-card-sub">Residence Card</div>
+      </div>
+    </div>
+    <button class="btn-primary" id="btn-doc-next" disabled onclick="updateStep(3); showScreen('screen-upload')">
+      次へ / Next
+    </button>
+  </div>
+
+  <!-- ===================== SCREEN: UPLOAD ===================== -->
+  <div class="screen" id="screen-upload">
+    <div class="kyc-section-title">書類をアップロード<br><span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);">Upload your document</span></div>
+    <div style="padding: 0 16px;">
+      <!-- Front -->
+      <div class="form-group" style="margin-bottom:0;">
+        <label style="margin-bottom:8px;">表面 / Front<span class="required">*</span></label>
+      </div>
+      <div class="upload-zone" id="front-zone">
+        <input type="file" accept="image/*" onchange="handleUpload(this,'front-zone','front-preview')"/>
+        <span class="upload-icon">📷</span>
+        <div class="upload-label">表面をアップロード</div>
+        <div class="upload-hint">JPG・PNG・HEIC 対応 / Max 10MB</div>
+        <img id="front-preview" class="upload-preview" alt="Front preview"/>
+      </div>
+      <!-- Back (hidden for passport) -->
+      <div id="back-section">
+        <div class="form-group" style="margin-bottom:0;">
+          <label style="margin-bottom:8px;">裏面 / Back<span class="required">*</span></label>
+        </div>
+        <div class="upload-zone" id="back-zone">
+          <input type="file" accept="image/*" onchange="handleUpload(this,'back-zone','back-preview')"/>
+          <span class="upload-icon">📷</span>
+          <div class="upload-label">裏面をアップロード</div>
+          <div class="upload-hint">JPG・PNG・HEIC 対応 / Max 10MB</div>
+          <img id="back-preview" class="upload-preview" alt="Back preview"/>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="updateStep(3); showScreen('screen-selfie')">
+      次へ / Next
+    </button>
+  </div>
+
+  <!-- ===================== SCREEN: SELFIE ===================== -->
+  <div class="screen" id="screen-selfie">
+    <div class="kyc-section-title">セルフィー確認<br><span style="font-size:0.8rem;font-weight:400;color:var(--text-muted);">Selfie with Document</span></div>
+    <div class="selfie-frame" id="selfie-frame">👤</div>
+    <div class="selfie-instructions">
+      身分証明書をお顔の横に持ち、カメラに向けて撮影してください。<br>
+      <span style="font-size:0.75rem;color:#999;">Hold your ID next to your face and look at the camera.</span>
+    </div>
+    <button class="btn-primary" id="btn-selfie" onclick="captureSelfie()">
+      📸 撮影する / Take Photo
+    </button>
+  </div>
+
+  <!-- ===================== SCREEN: PROCESSING ===================== -->
+  <div class="screen" id="screen-processing">
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+      <div class="processing-text">確認中... / Verifying...</div>
+      <div class="processing-sub">書類を審査しています。しばらくお待ちください。<br><span style="font-size:0.75rem;">Reviewing your documents, please wait.</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: SUCCESS ===================== -->
+  <div class="screen" id="screen-success">
+    <div class="success-wrap">
+      <div class="success-check">✓</div>
+      <div class="success-title">本人確認書類を受け付けました</div>
+      <div class="success-sub">
+        Identity verification submitted.<br>
+        1〜2営業日以内に審査いたします。<br>
+        <span style="font-size:0.75rem;">We will review within 1-2 business days.</span>
+      </div>
+      <div class="coin-reward">
+        🟡 +500 オリパコイン プレゼント！
+      </div>
+    </div>
+    <a href="profile.html" class="btn-primary" style="display:block;">マイページへ戻る / Return to My Page</a>
+  </div>
+
+</div><!-- /.page -->
+
+<script src="../assets/nav.js"></script>
 <script>
-  injectNav('account');
+  injectNav('mypage', true);
 
-  /* ---- State ---- */
-  let currentStep = 0;
-  let selectedDocType = null;
-  let requiresBack = true;
-  let photoTaken = false;
+  let selectedDoc = null;
 
-  const STEP_LABELS = ['開始', '年齢', '書類選択', 'アップロード', '顔写真', '完了'];
-
-  /* ---- Render step indicator ---- */
-  function renderSteps(containerId, activeIndex) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    const visibleSteps = [1, 2, 3, 4, 5]; // steps 1-5
-    let html = '<div class="steps">';
-    visibleSteps.forEach((stepNum, i) => {
-      const label = STEP_LABELS[stepNum];
-      let cls = 'step';
-      if (stepNum < activeIndex) cls += ' done';
-      else if (stepNum === activeIndex) cls += ' active';
-      const dot = stepNum < activeIndex
-        ? `<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>`
-        : stepNum;
-      html += `<div class="${cls}"><div class="step-dot">${dot}</div><div class="step-label">${label}</div></div>`;
-    });
-    html += '</div>';
-    container.innerHTML = html;
-  }
-
-  /* ---- Show a screen ---- */
   function showScreen(id) {
-    document.querySelectorAll('.kyc-screen').forEach(s => s.classList.remove('active'));
-    const el = document.getElementById('screen-' + id);
-    if (el) {
-      el.classList.add('active');
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function updateStep(activeNum) {
+    for (let i = 1; i <= 4; i++) {
+      const el = document.getElementById('si-' + i);
+      el.classList.remove('active', 'done');
+      if (i < activeNum) el.classList.add('done');
+      else if (i === activeNum) el.classList.add('active');
     }
   }
 
-  /* ---- Step navigation ---- */
-  function goToStep(step) {
-    currentStep = step;
-    renderSteps('stepsBar' + step, step);
-    showScreen(step);
-  }
-
-  /* ---- Screen 0: Start KYC ---- */
-  function startKYC() {
-    goToStep(1);
-    renderSteps('stepsBar1', 1);
-  }
-
-  /* ---- Screen 1: Age answer ---- */
-  function ageAnswer(isAdult) {
-    if (isAdult) {
-      goToStep(2);
-      renderSteps('stepsBar2', 2);
-    } else {
-      document.getElementById('under18Screen').classList.add('active');
-      document.querySelectorAll('.age-btn').forEach(b => b.style.opacity = '0.5');
-      document.getElementById('under18Screen').scrollIntoView({ behavior: 'smooth' });
-      showToast('保護者によるKYCが必要です。', 'warning');
-    }
-  }
-
-  function submitGuardian() {
-    const sei = document.getElementById('g-sei').value.trim();
-    const mei = document.getElementById('g-mei').value.trim();
-    const email = document.getElementById('g-email').value.trim();
-    const rel = document.getElementById('g-rel').value;
-    if (!sei || !mei || !email || !rel) {
-      showToast('必須項目を入力してください。', 'danger');
-      return;
-    }
-    showToast('保護者のKYC情報を提出しました ✓', 'success');
-    // Jump straight to success
-    setTimeout(() => goToStep(6), 800);
-  }
-
-  /* ---- Screen 2: Doc selection ---- */
-  function selectDoc(type, needsBack) {
+  function selectDoc(card, type) {
     document.querySelectorAll('.doc-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('doc-' + type).classList.add('selected');
-    selectedDocType = type;
-    requiresBack = needsBack;
-
-    const names = {
-      mynumber: 'マイナンバーカード (表裏両面)',
-      license: '運転免許証 (表裏両面)',
-      passport: 'パスポート (顔写真ページ)',
-      residence: '在留カード (表裏両面)'
-    };
-    const hint = document.getElementById('docSelectedHint');
-    document.getElementById('docSelectedText').textContent = `選択済み: ${names[type]}`;
-    hint.style.display = 'flex';
-    document.getElementById('btnNextDoc').style.display = 'block';
+    card.classList.add('selected');
+    selectedDoc = type;
+    document.getElementById('btn-doc-next').disabled = false;
+    // Hide back upload for passport
+    if (type === 'passport') {
+      document.getElementById('back-section').style.display = 'none';
+    } else {
+      document.getElementById('back-section').style.display = '';
+    }
   }
 
-  /* ---- Screen 3: Upload helpers ---- */
-  function handleFileUpload(input, zoneId, nameId) {
-    const zone = document.getElementById(zoneId);
-    const nameEl = document.getElementById(nameId);
+  function handleUpload(input, zoneId, previewId) {
     const file = input.files[0];
     if (!file) return;
-
+    const zone = document.getElementById(zoneId);
+    const preview = document.getElementById(previewId);
     zone.classList.add('has-file');
-    nameEl.textContent = '✓ ' + file.name;
-
-    // Show image preview if it's an image
-    const preview = zone.querySelector('.preview-thumb');
-    if (preview && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = e => { preview.src = e.target.result; };
-      reader.readAsDataURL(file);
-    }
+    zone.querySelector('.upload-icon').textContent = '✅';
+    zone.querySelector('.upload-label').textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
   }
 
-  function proceedFromUpload() {
-    const frontHasFile = document.getElementById('frontZone').classList.contains('has-file');
-    const backHasFile = document.getElementById('backZone').classList.contains('has-file');
-
-    if (!frontHasFile) {
-      showToast('表面の写真をアップロードしてください。', 'danger');
-      return;
-    }
-    if (requiresBack && !backHasFile) {
-      showToast('裏面の写真もアップロードしてください。', 'danger');
-      return;
-    }
-    goToStep(4);
-    renderSteps('stepsBar4', 4);
+  function handleGuardianUpload(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const zone = document.getElementById('guardian-upload');
+    zone.classList.add('has-file');
+    zone.querySelector('.upload-icon').textContent = '✅';
+    zone.querySelector('.upload-label').textContent = file.name;
   }
 
-  // When navigating to step 3, show/hide back upload based on doc type
-  const _origGoToStep = goToStep;
-  function goToStep(step) {
-    currentStep = step;
-    if (step === 3) {
-      // show/hide back panel
-      const backGroup = document.getElementById('backUploadGroup');
-      if (backGroup) backGroup.style.display = requiresBack ? 'block' : 'none';
-      renderSteps('stepsBar3', 3);
-    }
-    renderSteps('stepsBar' + step, step);
-    showScreen(step);
-  }
-
-  /* ---- Screen 4: Selfie ---- */
-  function capturePhoto() {
-    const flash = document.getElementById('captureFlash');
-    const frame = document.getElementById('cameraFrame');
-    const overlay = document.getElementById('cameraOverlay');
-
-    // Flash animation
-    flash.style.transition = 'opacity 0.05s';
-    flash.style.opacity = '1';
-    setTimeout(() => {
-      flash.style.transition = 'opacity 0.4s';
-      flash.style.opacity = '0';
-    }, 80);
-
-    // Update frame to captured state
-    setTimeout(() => {
-      frame.classList.add('captured');
-      overlay.innerHTML = `
-        <div style="text-align:center; padding:20px;">
-          <div style="font-size:3rem; margin-bottom:10px;">✅</div>
-          <div style="color:var(--success); font-weight:700; font-size:0.95rem;">撮影完了 Photo Captured</div>
-          <div style="color:rgba(255,255,255,0.5); font-size:0.75rem; margin-top:6px;">顔と書類が確認されました</div>
-        </div>`;
-      photoTaken = true;
-      document.getElementById('btnCapture').style.display = 'none';
-      document.getElementById('btnRetake').style.display = 'block';
-      document.getElementById('btnSubmitSelfie').style.display = 'block';
-    }, 200);
-
-    showToast('撮影しました ✓', 'success');
-  }
-
-  function retakePhoto() {
-    const frame = document.getElementById('cameraFrame');
-    frame.classList.remove('captured');
-    frame.querySelector('.camera-overlay').innerHTML = `
-      <div class="face-guide"></div>
-      <div class="cam-hint">書類を胸元に持ち、顔がガイドの中に収まるようにしてください<br/><em style="font-size:0.7em;">Hold your ID to your chest, face inside the oval</em></div>`;
-    photoTaken = false;
-    document.getElementById('btnCapture').style.display = 'block';
-    document.getElementById('btnRetake').style.display = 'none';
-    document.getElementById('btnSubmitSelfie').style.display = 'none';
-  }
-
-  /* ---- Screen 5: Processing (auto-advance) ---- */
-  function startProcessing() {
-    showScreen(5);
-
-    // Animate processing steps
-    const steps = ['proc-1', 'proc-2', 'proc-3'];
-    const doneIcon = `<svg class="check" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="var(--success)" stroke-width="2"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" stroke="var(--success)" d="M8 12l3 3 5-5"/></svg>`;
-
-    steps.forEach((id, i) => {
+  function captureSelfie() {
+    const frame = document.getElementById('selfie-frame');
+    const btn = document.getElementById('btn-selfie');
+    frame.classList.add('captured');
+    frame.innerHTML = '✅';
+    btn.textContent = '次へ / Next';
+    btn.onclick = function() {
+      updateStep(4);
+      showScreen('screen-processing');
       setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.classList.add('done');
-          el.querySelector('.check').outerHTML; // no-op; replace properly:
-          el.innerHTML = doneIcon + el.innerHTML.replace(/<svg[\s\S]*?<\/svg>/, '');
-        }
-      }, (i + 1) * 550);
-    });
-
-    // Auto-advance after 2.2s
-    setTimeout(() => {
-      goToStep(6);
-      renderSteps('stepsBar6', 6);
-    }, 2200);
+        showScreen('screen-success');
+      }, 2000);
+    };
   }
 
-  // Intercept goToStep for step 5 to run animation
-  const __goToStep = goToStep;
-  function goToStep(step) {
-    currentStep = step;
-    if (step === 3) {
-      const backGroup = document.getElementById('backUploadGroup');
-      if (backGroup) backGroup.style.display = requiresBack ? 'block' : 'none';
-    }
-    if (step === 5) {
-      startProcessing();
-      return;
-    }
-    renderSteps('stepsBar' + step, step);
-    showScreen(step);
-  }
-
-  /* ---- Reset for demo ---- */
-  function resetKYC() {
-    selectedDocType = null;
-    requiresBack = true;
-    photoTaken = false;
-    currentStep = 0;
-
-    // Clear uploads
-    ['frontZone', 'backZone', 'guardianUploadZone'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove('has-file');
-    });
-    // Reset camera
-    const frame = document.getElementById('cameraFrame');
-    if (frame) {
-      frame.classList.remove('captured');
-      const overlay = frame.querySelector('.camera-overlay');
-      if (overlay) overlay.innerHTML = `
-        <div class="face-guide"></div>
-        <div class="cam-hint">書類を胸元に持ち、顔がガイドの中に収まるようにしてください<br/><em style="font-size:0.7em;">Hold your ID to your chest, face inside the oval</em></div>`;
-    }
-    ['btnCapture','btnRetake','btnSubmitSelfie'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.style.display = id === 'btnCapture' ? 'block' : 'none';
-      }
-    });
-    // Reset age buttons
-    document.querySelectorAll('.age-btn').forEach(b => b.style.opacity = '1');
-    document.getElementById('under18Screen').classList.remove('active');
-
-    showScreen(0);
-    showToast('KYCフローをリセットしました。', 'info');
-  }
+  // Init: step 1 active
+  updateStep(1);
 </script>
 </body>
 </html>

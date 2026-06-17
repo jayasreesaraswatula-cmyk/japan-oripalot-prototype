@@ -1,450 +1,769 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Oripalot — Buy Coins</title>
+  <title>Oripalot — コイン購入</title>
   <link rel="stylesheet" href="../assets/style.css"/>
   <style>
-    .package-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 24px;
+    body { background: #F5F5F5; }
+
+    /* Back row override to look exactly like Figma */
+    .back-row-custom {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 16px;
+      background: #fff;
+      border-bottom: 1px solid #E0E0E0;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      text-decoration: none;
     }
-    .package-card {
-      background: var(--bg-card);
-      border: 2px solid var(--border);
+    .back-row-custom::before {
+      content: '←';
+      color: var(--red);
+      font-size: 1.1rem;
+    }
+
+    /* Subtitle text below back row */
+    .subtitle-bar {
+      padding: 10px 16px 12px;
+      background: #fff;
+      border-bottom: 1px solid #E0E0E0;
+      font-size: 0.75rem;
+      color: #666;
+      line-height: 1.6;
+    }
+    .subtitle-bar a { color: var(--red); text-decoration: none; }
+
+    /* Section headers */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 10px;
+      font-size: 0.95rem;
+      font-weight: 900;
+      color: #fff;
+      background: var(--red);
+    }
+
+    /* Special offer horizontal scroll */
+    .offers-scroll {
+      overflow-x: auto;
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #fff;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .offers-scroll::-webkit-scrollbar { display: none; }
+
+    .offer-card {
+      flex: 0 0 calc(50% - 6px);
+      min-width: 160px;
+      background: #fff;
+      border: 1.5px solid #E0E0E0;
       border-radius: var(--radius);
-      padding: 16px 12px;
+      padding: 14px 12px 12px;
       text-align: center;
       cursor: pointer;
-      transition: all 0.2s;
       position: relative;
+      transition: border-color 0.15s;
     }
-    .package-card:hover { border-color: var(--accent); }
-    .package-card.selected { border-color: var(--accent-gold); background: rgba(245,158,11,0.05); }
-    .package-card.popular { border-color: var(--accent); }
-    .popular-tag {
-      position: absolute;
-      top: -10px; left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.65rem;
+    .offer-card:hover { border-color: var(--red); }
+
+    .offer-img-placeholder {
+      width: 100%;
+      height: 80px;
+      background: repeating-conic-gradient(#ddd 0% 25%, #f0f0f0 0% 50%) 0 0 / 16px 16px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+    }
+    .offer-coins-label {
+      font-size: 0.85rem;
       font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 10px;
-      white-space: nowrap;
+      color: var(--text);
+      margin-bottom: 3px;
     }
-    .bonus-tag {
-      position: absolute;
-      top: -10px; right: 8px;
-      background: var(--success);
+    .offer-free-coins {
+      font-size: 0.72rem;
+      color: #4A90D9;
+      margin-bottom: 8px;
+    }
+    .offer-badge {
+      display: inline-block;
+      background: var(--red);
       color: #fff;
       font-size: 0.65rem;
       font-weight: 700;
       padding: 2px 8px;
       border-radius: 10px;
+      margin-bottom: 8px;
     }
-    .package-coins {
-      font-size: 1.3rem;
+    .offer-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-family: var(--font);
+      font-size: 0.85rem;
       font-weight: 700;
-      color: var(--accent-gold);
-      margin-bottom: 2px;
+      cursor: pointer;
     }
-    .package-coins span { font-size: 0.75rem; color: var(--text-muted); }
-    .package-price {
+    .offer-btn:hover { background: var(--red-dark); }
+
+    /* Coin purchase list */
+    .packages-section {
+      background: #fff;
+      margin-top: 8px;
+    }
+    .pkg-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #F0F0F0;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .pkg-row:hover { background: #fafafa; }
+    .pkg-row:last-child { border-bottom: none; }
+
+    .pkg-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pkg-coin-icon {
+      font-size: 1.6rem;
+      width: 36px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .pkg-info {}
+    .pkg-coins {
       font-size: 1rem;
       font-weight: 700;
       color: var(--text);
     }
-    .package-price-small {
+    .pkg-free {
       font-size: 0.72rem;
-      color: var(--text-muted);
+      color: #4A90D9;
       margin-top: 2px;
     }
-    .package-bonus {
+    .pkg-badge {
+      display: inline-block;
+      background: var(--red);
+      color: #fff;
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 10px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .pkg-right { text-align: right; flex-shrink: 0; }
+    .pkg-price-orig {
       font-size: 0.72rem;
-      color: var(--success);
-      margin-top: 4px;
+      color: #999;
+      text-decoration: line-through;
+      margin-bottom: 2px;
     }
-    .limit-notice {
-      background: rgba(245,158,11,0.1);
-      border: 1px solid rgba(245,158,11,0.3);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      color: var(--warning);
-      margin-bottom: 20px;
+    .pkg-price-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      font-family: var(--font);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    .payment-methods {
+    .pkg-price-btn:hover { background: var(--red-dark); }
+
+    /* Promo banner */
+    .promo-banner-block {
+      background: linear-gradient(135deg, #FF6B00, #E8002D);
+      color: #fff;
+      padding: 20px 16px;
+      text-align: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      line-height: 1.6;
+      margin-top: 8px;
+    }
+    .promo-banner-block .promo-tag {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      margin-bottom: 8px;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: #1A1A1A;
+      color: #ccc;
+      padding: 24px 16px 90px;
+      font-size: 0.75rem;
+      line-height: 1.8;
+    }
+    .site-footer .footer-logo {
+      font-size: 1rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .site-footer .footer-logo span { color: var(--red); }
+    .site-footer .footer-links {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      margin-bottom: 16px;
     }
-    .payment-method {
+    .site-footer .footer-links a { color: #aaa; text-decoration: none; font-size: 0.72rem; }
+    .site-footer .footer-links a:hover { color: #fff; }
+    .site-footer .footer-social {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .site-footer .social-btn {
+      padding: 6px 12px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 16px;
+      font-size: 0.72rem;
+      color: #ccc;
+      cursor: pointer;
+    }
+    .site-footer .footer-legal {
+      font-size: 0.68rem;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* ========== CONFIRMATION BOTTOM SHEET ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 300;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .confirm-sheet {
+      background: #fff;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 0 0 20px;
+    }
+    .confirm-sheet-header {
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 14px 16px;
-      background: var(--bg-card);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: all 0.2s;
+      justify-content: space-between;
+      padding: 16px 20px 12px;
+      border-bottom: 1px solid #F0F0F0;
     }
-    .payment-method:hover { border-color: var(--accent); }
-    .payment-method.selected { border-color: var(--accent-gold); }
-    .payment-method.disabled { opacity: 0.4; cursor: not-allowed; }
-    .payment-icon {
-      width: 40px; height: 28px;
+    .confirm-sheet-header h2 {
+      font-size: 1rem;
+      font-weight: 900;
+    }
+    .confirm-sheet-header .close-btn {
+      width: 28px; height: 28px;
+      background: #F0F0F0;
+      border-radius: 50%;
+      border: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .confirm-detail-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid #F5F5F5;
+      font-size: 0.87rem;
+    }
+    .confirm-detail-row .label { color: #666; }
+    .confirm-detail-row .val { font-weight: 700; }
+    .payment-method-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .payment-method-row .pm-icon {
+      width: 36px; height: 24px;
+      background: #F0F0F0;
       border-radius: 4px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem;
-      background: var(--bg-input);
-      flex-shrink: 0;
+      font-size: 0.85rem;
     }
-    .payment-info { flex: 1; }
-    .payment-info .name { font-size: 0.9rem; font-weight: 600; }
-    .payment-info .desc { font-size: 0.72rem; color: var(--text-muted); }
-    .payment-radio {
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
+    .payment-method-row .pm-name { font-size: 0.87rem; font-weight: 600; flex: 1; }
+    .payment-method-row .pm-change { font-size: 0.75rem; color: var(--red); cursor: pointer; }
+
+    .confirm-sheet-btns {
+      padding: 16px 20px 4px;
     }
-    .payment-method.selected .payment-radio { border-color: var(--accent-gold); }
-    .payment-method.selected .payment-radio::after {
-      content: '';
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent-gold);
-    }
-    .order-summary {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-bottom: 20px;
-    }
-    .order-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.88rem;
-      margin-bottom: 10px;
-    }
-    .order-row.total {
-      border-top: 1px solid var(--border);
-      padding-top: 10px;
-      margin-top: 4px;
+    .btn-purchase {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
       font-size: 1rem;
       font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 10px;
     }
-    .minor-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px;
-      background: var(--bg-input);
-      border-radius: var(--radius-sm);
-      margin-bottom: 16px;
+    .btn-purchase:hover { background: var(--red-dark); }
+    .btn-cancel-confirm {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      background: #F0F0F0;
+      color: #666;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 700;
       cursor: pointer;
     }
-    .minor-toggle input { accent-color: var(--accent); }
-    .minor-toggle label { font-size: 0.85rem; cursor: pointer; }
-    .screen { display: none; }
-    .screen.active { display: block; }
+
+    /* ========== SUCCESS POPUP (center modal) ========== */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 400;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .success-overlay.show { display: flex; }
+    .success-popup {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 360px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .success-popup .success-img {
+      width: 80px; height: 80px;
+      background: repeating-conic-gradient(#f0f0f0 0% 25%, #e0e0e0 0% 50%) 0 0 / 14px 14px;
+      border-radius: var(--radius);
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem;
+    }
+    .success-popup h2 {
+      font-size: 1.1rem;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+    .success-popup .success-sub {
+      font-size: 0.82rem;
+      color: #666;
+      margin-bottom: 18px;
+    }
+    .success-coin-row {
+      background: #F5F5F5;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+    .success-coin-row .sv { font-weight: 700; font-size: 0.95rem; }
+    .btn-close-success {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: #F0F0F0;
+      color: #666;
+      border: none;
+      border-radius: 30px;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+    }
+    .btn-close-success:hover { background: #E0E0E0; }
   </style>
 </head>
 <body>
 
-<div class="page">
-  <div style="margin-bottom:20px;">
-    <a href="wallet.html" style="display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);text-decoration:none;font-size:0.85rem;">
-      ← Back to Wallet
-    </a>
+<div class="page" id="main-page">
+
+  <!-- Logged-in header injected below via script -->
+
+  <!-- Back row -->
+  <a href="wallet.html" class="back-row-custom">コイン購入 &nbsp;<span style="font-weight:400;font-size:0.78rem;color:#999;">Coin Purchase</span></a>
+
+  <!-- Subtitle -->
+  <div class="subtitle-bar">
+    チャージ金額を選択してください &nbsp;/&nbsp; 特定商取引法に基づく表記について（お支払い・ご提供・キャンセル等）は<a href="#">こちら</a>
   </div>
 
-  <!-- SCREEN 1: Package selection -->
-  <div class="screen active" id="screen-packages">
-    <div class="section-header">
-      <h1>Buy Oripa Coins</h1>
-      <p class="mt-8">1 Oripa Coin = ¥1</p>
-    </div>
-
-    <div id="minor-notice" class="limit-notice" style="display:none;">
-      ⚠️ As a minor user, your monthly purchase limit applies. Payment is restricted to Google Pay and Apple Pay only.
-    </div>
-
-    <div class="minor-toggle">
-      <input type="checkbox" id="minor-toggle" onchange="toggleMinor(this.checked)"/>
-      <label for="minor-toggle">I am under 18 years old (demo — shows minor restrictions)</label>
-    </div>
-
-    <div class="package-grid" id="package-grid">
-      <div class="package-card" onclick="selectPackage(this, 500, 500)">
-        <div class="package-coins">500 🪙</div>
-        <div class="package-price">¥500</div>
-        <div class="package-price-small">¥1 per coin</div>
-      </div>
-      <div class="package-card" onclick="selectPackage(this, 1000, 1000)">
-        <div class="package-coins">1,000 🪙</div>
-        <div class="package-price">¥1,000</div>
-        <div class="package-price-small">¥1 per coin</div>
-      </div>
-      <div class="package-card popular" onclick="selectPackage(this, 3000, 3000)">
-        <div class="popular-tag">⭐ Popular</div>
-        <div class="package-coins">3,000 🪙</div>
-        <div class="package-price">¥3,000</div>
-        <div class="package-price-small">¥1 per coin</div>
-      </div>
-      <div class="package-card" onclick="selectPackage(this, 5000, 5000)">
-        <div class="package-coins">5,000 🪙</div>
-        <div class="package-price">¥5,000</div>
-        <div class="package-price-small">¥1 per coin</div>
-      </div>
-      <div class="package-card" onclick="selectPackage(this, 10000, 10000)">
-        <div class="bonus-tag">+100 💚</div>
-        <div class="package-coins">10,000 🪙</div>
-        <div class="package-price">¥10,000</div>
-        <div class="package-bonus">+100 Free Coins bonus</div>
-      </div>
-      <div class="package-card" onclick="selectPackage(this, 30000, 30000)">
-        <div class="bonus-tag">+500 💚</div>
-        <div class="package-coins">30,000 🪙</div>
-        <div class="package-price">¥30,000</div>
-        <div class="package-bonus">+500 Free Coins bonus</div>
-      </div>
-      <div class="package-card" onclick="selectPackage(this, 50000, 50000)">
-        <div class="bonus-tag">+1,000 💚</div>
-        <div class="package-coins">50,000 🪙</div>
-        <div class="package-price">¥50,000</div>
-        <div class="package-bonus">+1,000 Free Coins bonus</div>
-      </div>
-      <div class="package-card" onclick="selectPackage(this, 100000, 100000)">
-        <div class="bonus-tag">+3,000 💚</div>
-        <div class="package-coins">100,000 🪙</div>
-        <div class="package-price">¥100,000</div>
-        <div class="package-bonus">+3,000 Free Coins bonus</div>
-      </div>
-    </div>
-
-    <div class="card" style="font-size:0.8rem;color:var(--text-muted);margin-bottom:20px;">
-      📋 <strong style="color:var(--text);">Monthly limits for minors:</strong><br/>
-      Under 16: ¥5,000/month · Ages 16–17: ¥20,000/month
-    </div>
-
-    <button class="btn btn-gold" id="continue-btn" onclick="goToPayment()" disabled style="opacity:0.5;">
-      Select a package to continue →
-    </button>
+  <!-- ========== SPECIAL OFFER ========== -->
+  <div class="section-heading">
+    ⚡ スペシャルオファー
+    <span style="font-size:0.75rem;font-weight:400;opacity:0.85;">Special Offer</span>
   </div>
 
-  <!-- SCREEN 2: Payment method -->
-  <div class="screen" id="screen-payment">
-    <div class="section-header">
-      <h1>Payment method</h1>
-      <p class="mt-8">Choose how you'd like to pay</p>
+  <div class="offers-scroll">
+    <!-- Offer Card 1 -->
+    <div class="offer-card" onclick="openConfirm({coins:5000, free:500, price:500, label:'5,000コイン', orig:null, badge:'初回オファー 30%OFF'})">
+      <div class="offer-img-placeholder">💰</div>
+      <div class="offer-badge">初回オファー 30%OFF</div>
+      <div class="offer-coins-label">5,000 コイン</div>
+      <div class="offer-free-coins">+ 💎 フリーコイン 500</div>
+      <button class="offer-btn" onclick="event.stopPropagation(); openConfirm({coins:5000, free:500, price:500, label:'5,000コイン', orig:null, badge:'初回オファー 30%OFF'})">500円</button>
     </div>
 
-    <div class="payment-methods" id="payment-methods">
-      <div class="payment-method" onclick="selectPayment(this, 'card')" id="pm-card">
-        <div class="payment-icon">💳</div>
-        <div class="payment-info">
-          <div class="name">Credit / Debit Card</div>
-          <div class="desc">Visa, Mastercard, JCB, AMEX</div>
-        </div>
-        <div class="payment-radio"></div>
-      </div>
-      <div class="payment-method" onclick="selectPayment(this, 'google')" id="pm-google">
-        <div class="payment-icon">G</div>
-        <div class="payment-info">
-          <div class="name">Google Pay</div>
-          <div class="desc">Fast and secure</div>
-        </div>
-        <div class="payment-radio"></div>
-      </div>
-      <div class="payment-method" onclick="selectPayment(this, 'apple')" id="pm-apple">
-        <div class="payment-icon">🍎</div>
-        <div class="payment-info">
-          <div class="name">Apple Pay</div>
-          <div class="desc">Use Face ID or Touch ID</div>
-        </div>
-        <div class="payment-radio"></div>
-      </div>
-      <div class="payment-method" id="pm-cvs" onclick="selectPayment(this, 'cvs')">
-        <div class="payment-icon">🏪</div>
-        <div class="payment-info">
-          <div class="name">Convenience Store</div>
-          <div class="desc">Lawson, FamilyMart, 7-Eleven</div>
-        </div>
-        <div class="payment-radio"></div>
-      </div>
-    </div>
-
-    <div class="order-summary">
-      <div class="order-row">
-        <span>Package</span>
-        <span id="summary-coins">— coins</span>
-      </div>
-      <div class="order-row">
-        <span>Bonus coins</span>
-        <span id="summary-bonus" style="color:var(--success);">—</span>
-      </div>
-      <div class="order-row total">
-        <span>Total</span>
-        <span id="summary-price">¥—</span>
-      </div>
-    </div>
-
-    <button class="btn btn-gold" onclick="goToConfirm()">Proceed to payment →</button>
-    <button class="btn btn-ghost mt-8 w-full text-center" onclick="goToScreen('packages')">← Change package</button>
-  </div>
-
-  <!-- SCREEN 3: Confirm -->
-  <div class="screen" id="screen-confirm">
-    <div class="section-header">
-      <h1>Confirm purchase</h1>
-    </div>
-
-    <div class="order-summary">
-      <div class="order-row">
-        <span>Oripa Coins</span>
-        <span id="confirm-coins" class="text-gold">—</span>
-      </div>
-      <div class="order-row">
-        <span>Bonus Free Coins</span>
-        <span id="confirm-bonus" style="color:var(--success);">—</span>
-      </div>
-      <div class="order-row">
-        <span>Payment method</span>
-        <span id="confirm-payment">—</span>
-      </div>
-      <div class="order-row">
-        <span>Coin expiry</span>
-        <span style="color:var(--text-muted);">180 days from today</span>
-      </div>
-      <div class="order-row total">
-        <span>Amount charged</span>
-        <span id="confirm-price">¥—</span>
-      </div>
-    </div>
-
-    <div class="alert alert-info">
-      ℹ️ Coins will be added to your wallet immediately after payment confirmation.
-    </div>
-
-    <button class="btn btn-gold mt-16" onclick="completePurchase()">Confirm & Pay</button>
-    <button class="btn btn-ghost mt-8 w-full text-center" onclick="goToScreen('payment')">← Back</button>
-  </div>
-
-  <!-- SCREEN 4: Success -->
-  <div class="screen" id="screen-success">
-    <div style="text-align:center; padding:40px 20px;">
-      <div style="width:72px;height:72px;background:rgba(16,185,129,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2rem;">✅</div>
-      <h1>Purchase complete!</h1>
-      <p class="mt-8">Your coins have been added to your wallet.</p>
-
-      <div class="order-summary mt-24">
-        <div class="order-row">
-          <span>Oripa Coins added</span>
-          <span id="success-coins" class="text-gold">—</span>
-        </div>
-        <div class="order-row">
-          <span>Free Coins bonus</span>
-          <span id="success-bonus" style="color:var(--success);">—</span>
-        </div>
-        <div class="order-row total">
-          <span>New balance</span>
-          <span class="text-gold">20,500 🪙</span>
-        </div>
-      </div>
-
-      <button class="btn btn-gold mt-16" onclick="window.location.href='../index.html'">Start playing →</button>
-      <button class="btn btn-outline mt-8" onclick="window.location.href='wallet.html'">Back to wallet</button>
+    <!-- Offer Card 2 -->
+    <div class="offer-card" onclick="openConfirm({coins:10000, free:1000, price:500, label:'10,000コイン', orig:1000, badge:'初回オファー 50%OFF'})">
+      <div class="offer-img-placeholder">🎁</div>
+      <div class="offer-badge">初回オファー 50%OFF</div>
+      <div class="offer-coins-label">10,000 コイン</div>
+      <div class="offer-free-coins">+ 💎 フリーコイン 1,000</div>
+      <button class="offer-btn" onclick="event.stopPropagation(); openConfirm({coins:10000, free:1000, price:500, label:'10,000コイン', orig:1000, badge:'初回オファー 50%OFF'})">500円</button>
     </div>
   </div>
 
+  <!-- ========== COIN PURCHASE LIST ========== -->
+  <div class="section-heading" style="margin-top:8px;">
+    🟡 コイン購入
+    <span style="font-size:0.75rem;font-weight:400;opacity:0.85;">Coin Purchase</span>
+  </div>
+
+  <div class="packages-section">
+
+    <!-- 500円 — first item with 50% badge -->
+    <div class="pkg-row" onclick="openConfirm({coins:500, free:50, price:500, label:'500コイン', orig:1000, badge:'初回オファー 50%OFF'})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">500 コイン <span class="pkg-badge">初回 50%OFF</span></div>
+          <div class="pkg-free">+ 💎 フリーコイン 50</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <div class="pkg-price-orig">1,000円</div>
+        <button class="pkg-price-btn">500円</button>
+      </div>
+    </div>
+
+    <!-- 1,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:1000, free:100, price:1000, label:'1,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">1,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 100</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">1,000円</button>
+      </div>
+    </div>
+
+    <!-- 5,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:5000, free:500, price:5000, label:'5,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">5,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 500</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">5,000円</button>
+      </div>
+    </div>
+
+    <!-- 10,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:10000, free:1000, price:10000, label:'10,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">10,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 1,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">10,000円</button>
+      </div>
+    </div>
+
+    <!-- 20,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:20000, free:2000, price:20000, label:'20,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">20,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 2,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">20,000円</button>
+      </div>
+    </div>
+
+    <!-- 30,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:30000, free:3000, price:30000, label:'30,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">30,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 3,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">30,000円</button>
+      </div>
+    </div>
+
+    <!-- 50,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:50000, free:5000, price:50000, label:'50,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">50,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 5,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">50,000円</button>
+      </div>
+    </div>
+
+    <!-- 100,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:100000, free:10000, price:100000, label:'100,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">100,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 10,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">100,000円</button>
+      </div>
+    </div>
+
+    <!-- 300,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:300000, free:30000, price:300000, label:'300,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">300,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 30,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">300,000円</button>
+      </div>
+    </div>
+
+    <!-- 500,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:500000, free:50000, price:500000, label:'500,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">500,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 50,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">500,000円</button>
+      </div>
+    </div>
+
+    <!-- 1,000,000円 -->
+    <div class="pkg-row" onclick="openConfirm({coins:1000000, free:100000, price:1000000, label:'1,000,000コイン', orig:null, badge:null})">
+      <div class="pkg-left">
+        <div class="pkg-coin-icon">🟡</div>
+        <div class="pkg-info">
+          <div class="pkg-coins">1,000,000 コイン</div>
+          <div class="pkg-free">+ 💎 フリーコイン 100,000</div>
+        </div>
+      </div>
+      <div class="pkg-right">
+        <button class="pkg-price-btn">1,000,000円</button>
+      </div>
+    </div>
+
+  </div><!-- /packages-section -->
+
+  <!-- Promo banner -->
+  <div class="promo-banner-block">
+    <div class="promo-tag">キャンペーン中</div><br/>
+    PROMO BANNER 1 (EG. LINE CAMPAIGN / BEGINNER GUIDE)
+  </div>
+
+  <!-- Site footer -->
+  <footer class="site-footer">
+    <div class="footer-logo">🎴 オリパ<span>ロット</span></div>
+    <div class="footer-links">
+      <a href="#">会社概要</a>
+      <a href="#">利用規約</a>
+      <a href="#">プライバシーポリシー</a>
+      <a href="#">特定商取引法</a>
+      <a href="#">お問い合わせ</a>
+      <a href="#">ヘルプ</a>
+    </div>
+    <div class="footer-social">
+      <div class="social-btn">🐦 Twitter / X</div>
+      <div class="social-btn">📸 Instagram</div>
+      <div class="social-btn">💬 LINE</div>
+    </div>
+    <div class="footer-legal">
+      © 2024 Oripalot Inc. All rights reserved.<br/>
+      本サービスは日本国内向けに提供しております。<br/>
+      18歳未満の方のご利用には保護者の同意が必要です。
+    </div>
+  </footer>
+
+</div><!-- /page -->
+
+<!-- ========== CONFIRMATION BOTTOM SHEET ========== -->
+<div class="modal-overlay" id="modal-confirm" onclick="handleConfirmOverlay(event)">
+  <div class="confirm-sheet" id="confirm-sheet">
+    <div class="confirm-sheet-header">
+      <h2>購入確認 <span style="font-size:0.72rem;font-weight:400;color:#999;">Purchase Confirmation</span></h2>
+      <button class="close-btn" onclick="closeConfirm()">✕</button>
+    </div>
+
+    <div class="confirm-detail-row">
+      <span class="label">🟡 オリパコイン</span>
+      <span class="val" id="conf-coins" style="color:#F5A623;">—</span>
+    </div>
+    <div class="confirm-detail-row">
+      <span class="label">💎 フリーコイン</span>
+      <span class="val" id="conf-free" style="color:#4A90D9;">—</span>
+    </div>
+    <div id="conf-badge-row" class="confirm-detail-row" style="display:none;">
+      <span class="label">キャンペーン</span>
+      <span class="val" id="conf-badge" style="color:var(--red);font-size:0.78rem;">—</span>
+    </div>
+    <div class="confirm-detail-row" style="border-bottom:2px solid #F0F0F0;">
+      <span class="label">合計金額</span>
+      <span class="val" id="conf-price" style="color:var(--red);font-size:1rem;">—</span>
+    </div>
+
+    <div class="payment-method-row">
+      <div class="pm-icon">💳</div>
+      <div class="pm-name">クレジットカード <span style="font-size:0.72rem;color:#999;">Credit Card</span></div>
+      <span class="pm-change">変更</span>
+    </div>
+
+    <div class="confirm-sheet-btns">
+      <button class="btn-purchase" onclick="completePurchase()">
+        購入する / Purchase
+      </button>
+      <button class="btn-cancel-confirm" onclick="closeConfirm()">
+        キャンセル / Cancel
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SUCCESS POPUP ========== -->
+<div class="success-overlay" id="modal-success">
+  <div class="success-popup">
+    <div class="success-img">💰</div>
+    <h2>購入完了！</h2>
+    <div class="success-sub">
+      Thank you for your purchase!<br/>
+      コインがウォレットに追加されました。
+    </div>
+    <div class="success-coin-row">
+      <span>🟡 オリパコイン</span>
+      <span class="sv" id="suc-coins" style="color:#F5A623;">—</span>
+    </div>
+    <div class="success-coin-row">
+      <span>💎 フリーコイン</span>
+      <span class="sv" id="suc-free" style="color:#4A90D9;">—</span>
+    </div>
+    <button class="btn-close-success" onclick="closeSuccess()">閉じる / Close</button>
+  </div>
 </div>
 
 <script src="../assets/nav.js"></script>
 <script>
-  injectNav('wallet');
+  // Inject logged-in header + bottom nav (oripa tab active)
+  injectNav('oripa', true);
 
-  let selectedPackage = null;
-  let selectedPayment = null;
-  const isMinor = false;
+  let currentPkg = null;
 
-  function selectPackage(el, coins, price) {
-    document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedPackage = { coins, price };
-
-    const btn = document.getElementById('continue-btn');
-    btn.disabled = false;
-    btn.style.opacity = '1';
-    btn.textContent = `Buy ${coins.toLocaleString()} coins for ¥${price.toLocaleString()} →`;
+  function openConfirm(pkg) {
+    currentPkg = pkg;
+    document.getElementById('conf-coins').textContent = pkg.coins.toLocaleString() + ' コイン';
+    document.getElementById('conf-free').textContent  = '+' + pkg.free.toLocaleString() + ' フリーコイン';
+    document.getElementById('conf-price').textContent = '¥' + pkg.price.toLocaleString();
+    const badgeRow = document.getElementById('conf-badge-row');
+    if (pkg.badge) {
+      document.getElementById('conf-badge').textContent = pkg.badge;
+      badgeRow.style.display = 'flex';
+    } else {
+      badgeRow.style.display = 'none';
+    }
+    document.getElementById('modal-confirm').classList.add('show');
   }
 
-  function goToPayment() {
-    if (!selectedPackage) return;
-    // Update summary
-    const bonus = getBonusCoins(selectedPackage.coins);
-    document.getElementById('summary-coins').textContent = selectedPackage.coins.toLocaleString() + ' 🪙';
-    document.getElementById('summary-bonus').textContent = bonus > 0 ? '+' + bonus + ' 💚' : 'None';
-    document.getElementById('summary-price').textContent = '¥' + selectedPackage.price.toLocaleString();
-    goToScreen('payment');
+  function closeConfirm() {
+    document.getElementById('modal-confirm').classList.remove('show');
   }
 
-  function getBonusCoins(coins) {
-    if (coins >= 100000) return 3000;
-    if (coins >= 50000) return 1000;
-    if (coins >= 30000) return 500;
-    if (coins >= 10000) return 100;
-    return 0;
-  }
-
-  function selectPayment(el, type) {
-    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedPayment = type;
-  }
-
-  function goToConfirm() {
-    if (!selectedPayment) { showToast('Please select a payment method', 'danger'); return; }
-    const bonus = getBonusCoins(selectedPackage.coins);
-    const paymentNames = { card:'Credit/Debit Card', google:'Google Pay', apple:'Apple Pay', cvs:'Convenience Store' };
-    document.getElementById('confirm-coins').textContent = selectedPackage.coins.toLocaleString() + ' 🪙';
-    document.getElementById('confirm-bonus').textContent = bonus > 0 ? '+' + bonus + ' 💚' : 'None';
-    document.getElementById('confirm-payment').textContent = paymentNames[selectedPayment];
-    document.getElementById('confirm-price').textContent = '¥' + selectedPackage.price.toLocaleString();
-    goToScreen('confirm');
+  function handleConfirmOverlay(e) {
+    if (e.target === document.getElementById('modal-confirm')) closeConfirm();
   }
 
   function completePurchase() {
-    const bonus = getBonusCoins(selectedPackage.coins);
-    document.getElementById('success-coins').textContent = '+' + selectedPackage.coins.toLocaleString() + ' 🪙';
-    document.getElementById('success-bonus').textContent = bonus > 0 ? '+' + bonus + ' 💚' : 'None';
-    goToScreen('success');
+    if (!currentPkg) return;
+    closeConfirm();
+    document.getElementById('suc-coins').textContent = '+' + currentPkg.coins.toLocaleString() + ' コイン';
+    document.getElementById('suc-free').textContent  = '+' + currentPkg.free.toLocaleString() + ' フリーコイン';
+    document.getElementById('modal-success').classList.add('show');
   }
 
-  function goToScreen(name) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + name).classList.add('active');
-    window.scrollTo(0, 0);
-  }
-
-  function toggleMinor(isMinor) {
-    document.getElementById('minor-notice').style.display = isMinor ? 'block' : 'none';
-    const cvs = document.getElementById('pm-cvs');
-    const card = document.getElementById('pm-card');
-    if (isMinor) {
-      cvs.classList.add('disabled');
-      card.classList.add('disabled');
-      cvs.onclick = () => showToast('Convenience store payment not available for minors', 'danger');
-      card.onclick = () => showToast('Card payment not available for minors', 'danger');
-    }
+  function closeSuccess() {
+    document.getElementById('modal-success').classList.remove('show');
+    showToast('コインが追加されました！', 'success');
   }
 </script>
 </body>

@@ -1,359 +1,415 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Oripalot — Wallet</title>
+  <title>オリパロット — コイン履歴</title>
   <link rel="stylesheet" href="../assets/style.css"/>
   <style>
-    .wallet-hero {
-      background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 100%);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-    .wallet-total {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .wallet-amount {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent-gold);
-    }
-    .currency-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .currency-card {
-      background: rgba(0,0,0,0.3);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-    }
-    .currency-card .label {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .currency-card .amount {
-      font-size: 1.3rem;
-      font-weight: 700;
-    }
-    .currency-card .expiry {
-      font-size: 0.68rem;
-      margin-top: 4px;
-    }
-    .currency-card.oripa .amount { color: var(--accent-gold); }
-    .currency-card.free .amount { color: var(--success); }
-    .expiry-warning {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      font-size: 0.82rem;
-      color: var(--danger);
-      margin-bottom: 16px;
+    /* ---- Filter Tabs ---- */
+    .filter-tabs {
       display: flex;
-      gap: 8px;
-      align-items: flex-start;
-    }
-    .action-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-    .action-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      text-decoration: none;
-      display: block;
-    }
-    .action-btn:hover { border-color: var(--accent); }
-    .action-btn .icon { font-size: 1.5rem; margin-bottom: 6px; }
-    .action-btn .label { font-size: 0.8rem; color: var(--text-muted); }
-    .action-btn .label strong { display: block; color: var(--text); font-size: 0.85rem; margin-bottom: 2px; }
-    .history-tabs {
-      display: flex;
+      background: var(--white);
       border-bottom: 1px solid var(--border);
-      margin-bottom: 16px;
-      gap: 0;
+      position: sticky;
+      top: 57px;
+      z-index: 90;
     }
-    .history-tab {
+    .filter-tab {
       flex: 1;
-      padding: 10px;
+      padding: 12px 4px;
       text-align: center;
-      font-size: 0.82rem;
-      cursor: pointer;
-      color: var(--text-muted);
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      font-weight: 500;
-      background: none;
-      border-top: none;
-      border-left: none;
-      border-right: none;
+      font-size: 0.8rem;
+      font-weight: 600;
       font-family: var(--font);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .history-tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
+    .filter-tab.active {
+      color: var(--red);
+      border-bottom-color: var(--red);
     }
-    .tx-item {
+
+    /* ---- Balance Card ---- */
+    .balance-card {
+      background: var(--white);
+      margin: 16px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .balance-main {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1.1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .balance-free {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--diamond);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .expiry-warning-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 0;
+      gap: 8px;
+      background: var(--red-light);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-top: 12px;
+    }
+    .expiry-warning-row .warn-text {
+      font-size: 0.78rem;
+      color: var(--red);
+      font-weight: 600;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .btn-detail {
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid var(--red);
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--red);
+      background: var(--white);
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: var(--font);
+    }
+
+    /* ---- Date Group Header ---- */
+    .date-header {
+      padding: 8px 16px;
+      background: var(--bg);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    /* ---- Transaction Row ---- */
+    .tx-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--white);
       border-bottom: 1px solid var(--border);
     }
-    .tx-item:last-child { border-bottom: none; }
-    .tx-icon {
-      width: 38px; height: 38px;
+    .tx-circle {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-      margin-right: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
       flex-shrink: 0;
     }
-    .tx-info { flex: 1; }
-    .tx-info .name { font-size: 0.88rem; font-weight: 600; }
-    .tx-info .date { font-size: 0.72rem; color: var(--text-dim); margin-top: 2px; }
-    .tx-amount { font-weight: 700; font-size: 0.95rem; }
-    .tx-amount.positive { color: var(--success); }
-    .tx-amount.negative { color: var(--danger); }
-    .coin-type-filter {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .filter-pill {
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 0.78rem;
+    .tx-circle.red    { background: #FFE8EC; }
+    .tx-circle.blue   { background: #EBF4FF; }
+    .tx-circle.green  { background: #E8F8EF; }
+    .tx-circle.orange { background: #FFF3E6; }
+    .tx-circle.purple { background: #F3EEFF; }
+    .tx-circle.gray   { background: #F0F0F0; }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-title {
+      font-size: 0.88rem;
       font-weight: 600;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      font-family: var(--font);
-      transition: all 0.2s;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .filter-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .expiry-section { margin-bottom: 24px; }
-    .expiry-row {
+    .tx-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .tx-amount {
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .tx-amount.plus  { color: var(--success); }
+    .tx-amount.minus { color: var(--red); }
+    .tx-coin-badge {
+      font-size: 0.7rem;
+      display: block;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+    .tx-coin-badge.gold    { color: var(--gold); }
+    .tx-coin-badge.diamond { color: var(--diamond); }
+
+    /* ---- Footer ---- */
+    .page-footer {
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      padding: 20px 16px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+    .footer-links {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 14px;
-      background: var(--bg-input);
-      border-radius: var(--radius-sm);
-      margin-bottom: 6px;
-      font-size: 0.82rem;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
     }
-    .expiry-row .coins { font-weight: 700; color: var(--accent-gold); }
-    .expiry-row .date { color: var(--text-dim); }
-    .expiry-row .days-left { color: var(--danger); font-weight: 600; }
+    .footer-links a {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-legal {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* ---- Hidden groups for filter ---- */
+    .tx-group { }
+    .tx-group.hidden { display: none; }
   </style>
 </head>
 <body>
 
 <div class="page">
 
-  <!-- Wallet Hero -->
-  <div class="wallet-hero">
-    <div class="wallet-total">Total balance</div>
-    <div class="wallet-amount">10,500 coins</div>
-    <div class="currency-cards">
-      <div class="currency-card oripa">
-        <div class="label">🪙 Oripa Coins</div>
-        <div class="amount">10,000</div>
-        <div class="expiry text-muted">Expires in 142 days</div>
+  <!-- Back row -->
+  <a href="mypage.html" class="back-row">コイン履歴 / Coin History</a>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    <button class="filter-tab active" data-filter="all" onclick="setFilter('all', this)">すべて</button>
+    <button class="filter-tab" data-filter="oripa" onclick="setFilter('oripa', this)">オリパコイン</button>
+    <button class="filter-tab" data-filter="free" onclick="setFilter('free', this)">フリーコイン</button>
+  </div>
+
+  <!-- Balance Card -->
+  <div class="balance-card">
+    <div class="balance-main">🟡 10,000</div>
+    <div class="balance-free">💎 10,000</div>
+    <div class="expiry-warning-row">
+      <div class="warn-text">⚠️ コインの有効期限はあと3日です！<br/><span style="font-weight:400;font-size:0.72rem;">Your coins expire in 3 days!</span></div>
+      <button class="btn-detail" onclick="showToast('有効期限の詳細を確認しています', 'info')">詳細を確認</button>
+    </div>
+  </div>
+
+  <!-- Date group: 2026年6月17日 -->
+  <div class="tx-group" data-type="all oripa free">
+    <div class="date-header">2026年6月17日（今日）</div>
+
+    <div class="tx-row" data-coin="oripa">
+      <div class="tx-circle red">🛒</div>
+      <div class="tx-info">
+        <div class="tx-title">スペシャルオファー購入</div>
+        <div class="tx-sub">Special Offer Purchase · 14:32</div>
       </div>
-      <div class="currency-card free">
-        <div class="label">💚 Free Coins</div>
-        <div class="amount">500</div>
-        <div class="expiry text-muted">Expires in 18 days</div>
+      <div class="tx-amount plus">
+        +5,000
+        <span class="tx-coin-badge gold">🟡 オリパコイン</span>
+      </div>
+    </div>
+
+    <div class="tx-row" data-coin="oripa">
+      <div class="tx-circle blue">🎴</div>
+      <div class="tx-info">
+        <div class="tx-title">オリパガチャ</div>
+        <div class="tx-sub">Oripa Gacha Draw · 13:10</div>
+      </div>
+      <div class="tx-amount minus">
+        −1,000
+        <span class="tx-coin-badge gold">🟡 オリパコイン</span>
+      </div>
+    </div>
+
+    <div class="tx-row" data-coin="free">
+      <div class="tx-circle green">🎁</div>
+      <div class="tx-info">
+        <div class="tx-title">1日1回チャンス</div>
+        <div class="tx-sub">Daily Free Chance · 09:01</div>
+      </div>
+      <div class="tx-amount plus">
+        +50
+        <span class="tx-coin-badge diamond">💎 フリーコイン</span>
       </div>
     </div>
   </div>
 
-  <!-- Expiry Warning -->
-  <div class="expiry-warning">
-    ⚠️ <div><strong>200 Free Coins expire in 3 days!</strong><br/>Use them in a free draw before they're gone.</div>
-  </div>
+  <!-- Date group: 2026年6月15日 -->
+  <div class="tx-group" data-type="all oripa">
+    <div class="date-header">2026年6月15日</div>
 
-  <!-- Quick Actions -->
-  <div class="action-grid">
-    <a href="coin-purchase.html" class="action-btn">
-      <div class="icon">💳</div>
-      <div class="label"><strong>Buy Coins</strong>From ¥500</div>
-    </a>
-    <a href="special-offers.html" class="action-btn">
-      <div class="icon">🎁</div>
-      <div class="label"><strong>Special Offers</strong>Discounts available</div>
-    </a>
-    <a href="../index.html" class="action-btn">
-      <div class="icon">🎴</div>
-      <div class="label"><strong>Play Oripa</strong>Use your coins</div>
-    </a>
-    <a href="coin-purchase.html" class="action-btn">
-      <div class="icon">📊</div>
-      <div class="label"><strong>Coin History</strong>View all transactions</div>
-    </a>
-  </div>
-
-  <!-- Expiry Schedule -->
-  <div class="expiry-section">
-    <h3 class="mb-8">Upcoming expirations</h3>
-    <div class="expiry-row">
-      <span class="coins">200 💚 Free Coins</span>
-      <span class="date">Jun 20, 2026</span>
-      <span class="days-left">3 days</span>
-    </div>
-    <div class="expiry-row">
-      <span class="coins">300 💚 Free Coins</span>
-      <span class="date">Jul 5, 2026</span>
-      <span class="date">18 days</span>
-    </div>
-    <div class="expiry-row">
-      <span class="coins">5,000 🪙 Oripa Coins</span>
-      <span class="date">Nov 3, 2026</span>
-      <span class="date">142 days</span>
-    </div>
-    <div class="expiry-row">
-      <span class="coins">5,000 🪙 Oripa Coins</span>
-      <span class="date">Dec 1, 2026</span>
-      <span class="date">170 days</span>
-    </div>
-  </div>
-
-  <!-- Transaction History -->
-  <h3 class="mb-8">Transaction history</h3>
-
-  <div class="coin-type-filter">
-    <button class="filter-pill active" onclick="filterHistory('all', this)">All</button>
-    <button class="filter-pill" onclick="filterHistory('oripa', this)">🪙 Oripa</button>
-    <button class="filter-pill" onclick="filterHistory('free', this)">💚 Free</button>
-  </div>
-
-  <div class="history-tabs">
-    <button class="history-tab active" onclick="switchTab('earned', this)">Earned</button>
-    <button class="history-tab" onclick="switchTab('spent', this)">Spent</button>
-    <button class="history-tab" onclick="switchTab('expired', this)">Expired</button>
-  </div>
-
-  <div id="history-list">
-    <!-- Earned tab -->
-    <div class="tab-content" id="tab-earned">
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(16,185,129,0.15);">💳</div>
-        <div class="tx-info">
-          <div class="name">Coin purchase — 5,000 pack</div>
-          <div class="date">Jun 15, 2026 · 14:32</div>
-        </div>
-        <div class="tx-amount positive">+5,000 🪙</div>
+    <div class="tx-row" data-coin="oripa">
+      <div class="tx-circle orange">💳</div>
+      <div class="tx-info">
+        <div class="tx-title">オリパコイン購入</div>
+        <div class="tx-sub">Oripa Coin Purchase · 11:22</div>
       </div>
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(16,185,129,0.15);">🎁</div>
-        <div class="tx-info">
-          <div class="name">Daily login bonus</div>
-          <div class="date">Jun 17, 2026 · 09:01</div>
-        </div>
-        <div class="tx-amount positive">+50 💚</div>
-      </div>
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(16,185,129,0.15);">👥</div>
-        <div class="tx-info">
-          <div class="name">Referral bonus — friend registered</div>
-          <div class="date">Jun 14, 2026 · 18:55</div>
-        </div>
-        <div class="tx-amount positive">+200 💚</div>
-      </div>
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(16,185,129,0.15);">💳</div>
-        <div class="tx-info">
-          <div class="name">Coin purchase — 5,000 pack</div>
-          <div class="date">Jun 10, 2026 · 11:22</div>
-        </div>
-        <div class="tx-amount positive">+5,000 🪙</div>
-      </div>
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(16,185,129,0.15);">🏆</div>
-        <div class="tx-info">
-          <div class="name">Prize converted to coins</div>
-          <div class="date">Jun 9, 2026 · 20:14</div>
-        </div>
-        <div class="tx-amount positive">+800 🪙</div>
-      </div>
-    </div>
-
-    <!-- Spent tab -->
-    <div class="tab-content" id="tab-spent" style="display:none;">
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(124,58,237,0.15);">🎴</div>
-        <div class="tx-info">
-          <div class="name">Pokémon Oripa Draw ×1</div>
-          <div class="date">Jun 17, 2026 · 13:10</div>
-        </div>
-        <div class="tx-amount negative">−1,000 🪙</div>
-      </div>
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(124,58,237,0.15);">🎴</div>
-        <div class="tx-info">
-          <div class="name">Pokémon Oripa Draw ×5</div>
-          <div class="date">Jun 16, 2026 · 19:44</div>
-        </div>
-        <div class="tx-amount negative">−5,000 🪙</div>
-      </div>
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(16,185,129,0.15);">🎴</div>
-        <div class="tx-info">
-          <div class="name">Free Draw — Limited Oripa</div>
-          <div class="date">Jun 15, 2026 · 10:30</div>
-        </div>
-        <div class="tx-amount negative">−100 💚</div>
-      </div>
-    </div>
-
-    <!-- Expired tab -->
-    <div class="tab-content" id="tab-expired" style="display:none;">
-      <div class="tx-item">
-        <div class="tx-icon" style="background:rgba(107,114,128,0.15);">💀</div>
-        <div class="tx-info">
-          <div class="name">Free Coins expired (unused)</div>
-          <div class="date">May 31, 2026</div>
-        </div>
-        <div class="tx-amount" style="color:var(--text-dim);">−150 💚</div>
+      <div class="tx-amount plus">
+        +10,000
+        <span class="tx-coin-badge gold">🟡 オリパコイン</span>
       </div>
     </div>
   </div>
 
-</div><!-- end .page -->
+  <!-- Date group: 2026年6月14日 -->
+  <div class="tx-group" data-type="all free">
+    <div class="date-header">2026年6月14日</div>
+
+    <div class="tx-row" data-coin="free">
+      <div class="tx-circle purple">💎</div>
+      <div class="tx-info">
+        <div class="tx-title">フリーコイン付与</div>
+        <div class="tx-sub">Free Coin Grant · 20:14</div>
+      </div>
+      <div class="tx-amount minus">
+        −500
+        <span class="tx-coin-badge diamond">💎 フリーコイン</span>
+      </div>
+    </div>
+
+    <div class="tx-row" data-coin="free">
+      <div class="tx-circle green">🎯</div>
+      <div class="tx-info">
+        <div class="tx-title">フリーポイント</div>
+        <div class="tx-sub">Free Point Award · 18:55</div>
+      </div>
+      <div class="tx-amount plus">
+        +200
+        <span class="tx-coin-badge diamond">💎 フリーコイン</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date group: 2026年6月10日 -->
+  <div class="tx-group" data-type="all oripa">
+    <div class="date-header">2026年6月10日</div>
+
+    <div class="tx-row" data-coin="oripa">
+      <div class="tx-circle red">🛒</div>
+      <div class="tx-info">
+        <div class="tx-title">スペシャルオファー購入</div>
+        <div class="tx-sub">Special Offer Purchase · 16:05</div>
+      </div>
+      <div class="tx-amount plus">
+        +3,000
+        <span class="tx-coin-badge gold">🟡 オリパコイン</span>
+      </div>
+    </div>
+
+    <div class="tx-row" data-coin="oripa">
+      <div class="tx-circle blue">🎴</div>
+      <div class="tx-info">
+        <div class="tx-title">オリパガチャ</div>
+        <div class="tx-sub">Oripa Gacha Draw ×5 · 15:30</div>
+      </div>
+      <div class="tx-amount minus">
+        −5,000
+        <span class="tx-coin-badge gold">🟡 オリパコイン</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Date group: 2026年6月7日 -->
+  <div class="tx-group" data-type="all free">
+    <div class="date-header">2026年6月7日</div>
+
+    <div class="tx-row" data-coin="free">
+      <div class="tx-circle green">🎁</div>
+      <div class="tx-info">
+        <div class="tx-title">1日1回チャンス</div>
+        <div class="tx-sub">Daily Free Chance · 08:45</div>
+      </div>
+      <div class="tx-amount plus">
+        +50
+        <span class="tx-coin-badge diamond">💎 フリーコイン</span>
+      </div>
+    </div>
+
+    <div class="tx-row" data-coin="free">
+      <div class="tx-circle gray">⏰</div>
+      <div class="tx-info">
+        <div class="tx-title">フリーコイン有効期限切れ</div>
+        <div class="tx-sub">Free Coins Expired · 00:00</div>
+      </div>
+      <div class="tx-amount minus" style="color:var(--text-dim);">
+        −150
+        <span class="tx-coin-badge diamond">💎 フリーコイン</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <div class="footer-logo">🎴 オリパロット</div>
+    <div class="footer-links">
+      <a href="#">利用規約</a>
+      <a href="#">プライバシーポリシー</a>
+      <a href="#">特定商取引法</a>
+      <a href="#">お問い合わせ</a>
+    </div>
+    <div class="footer-legal">
+      © 2026 Oripalot Japan. All rights reserved.<br/>
+      18歳未満の方はご利用いただけません。
+    </div>
+  </div>
+
+</div>
 
 <script src="../assets/nav.js"></script>
 <script>
-  injectNav('wallet');
+  injectNav('mypage');
 
-  function switchTab(tab, el) {
-    document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  function setFilter(type, el) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
     el.classList.add('active');
-    document.getElementById('tab-' + tab).style.display = 'block';
-  }
 
-  function filterHistory(type, el) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    showToast('Showing: ' + (type === 'all' ? 'All transactions' : type === 'oripa' ? 'Oripa Coins only' : 'Free Coins only'), 'info');
+    const rows = document.querySelectorAll('.tx-row');
+    const groups = document.querySelectorAll('.tx-group');
+
+    if (type === 'all') {
+      rows.forEach(r => r.style.display = '');
+      groups.forEach(g => g.style.display = '');
+    } else {
+      groups.forEach(g => {
+        const types = g.dataset.type || '';
+        const hasType = types.includes(type);
+        g.style.display = hasType ? '' : 'none';
+      });
+      rows.forEach(r => {
+        const coin = r.dataset.coin || '';
+        r.style.display = coin === type ? '' : 'none';
+      });
+      // hide date headers for groups that are empty after filter
+      document.querySelectorAll('.tx-group').forEach(g => {
+        const visibleRows = g.querySelectorAll('.tx-row:not([style*="none"])');
+        if (visibleRows.length === 0) g.style.display = 'none';
+      });
+    }
   }
 </script>
 </body>

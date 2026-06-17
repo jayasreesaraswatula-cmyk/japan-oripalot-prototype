@@ -1,727 +1,424 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FAQ — Oripalot</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>オリパロット — よくある質問</title>
+  <link rel="stylesheet" href="../assets/style.css"/>
   <style>
-    .faq-hero {
-      text-align: center;
-      padding: 24px 0 20px;
-      margin-bottom: 8px;
-    }
-    .faq-hero h1 {
-      font-size: 1.5rem;
-      margin-bottom: 6px;
-    }
-    .faq-hero p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Search bar */
-    .faq-search {
-      position: relative;
-      margin-bottom: 24px;
-    }
-    .faq-search input {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: var(--font);
-      font-size: 0.9rem;
-      padding: 12px 16px 12px 42px;
-      width: 100%;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .faq-search input:focus { border-color: var(--border-focus); }
-    .faq-search input::placeholder { color: var(--text-dim); }
-    .faq-search-icon {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      pointer-events: none;
-    }
-
-    /* Category chip nav */
-    .faq-cats {
-      display: flex;
-      gap: 8px;
+    /* ---- Category Tabs ---- */
+    .cat-tabs-wrapper {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
       overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 24px;
+      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
+      position: sticky;
+      top: 57px;
+      z-index: 90;
     }
-    .faq-cats::-webkit-scrollbar { display: none; }
-    .cat-chip {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 6px 14px;
+    .cat-tabs-wrapper::-webkit-scrollbar { display: none; }
+    .cat-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 8px;
+      white-space: nowrap;
+    }
+    .cat-tab {
+      display: inline-block;
+      padding: 12px 14px;
       font-size: 0.78rem;
       font-weight: 600;
+      font-family: var(--font);
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
       color: var(--text-muted);
       cursor: pointer;
+      transition: all 0.15s;
       white-space: nowrap;
-      transition: all 0.2s;
-      flex-shrink: 0;
     }
-    .cat-chip.active, .cat-chip:hover {
-      background: rgba(124,58,237,0.15);
-      border-color: var(--accent);
-      color: var(--accent);
+    .cat-tab.active {
+      color: var(--red);
+      border-bottom-color: var(--red);
     }
+    .cat-tab:hover { color: var(--red); }
 
-    /* FAQ Category section */
-    .faq-category {
-      margin-bottom: 28px;
-    }
-    .faq-category-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .faq-category-icon {
-      font-size: 1.2rem;
-    }
-    .faq-category-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .faq-category-count {
-      margin-left: auto;
+    /* ---- FAQ Section ---- */
+    .faq-section { display: none; }
+    .faq-section.active { display: block; }
+
+    .faq-section-title {
+      padding: 14px 16px 8px;
       font-size: 0.72rem;
-      color: var(--text-dim);
-      background: var(--bg-input);
-      border-radius: 20px;
-      padding: 2px 8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--bg);
     }
 
-    /* Accordion item */
-    .faq-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      margin-bottom: 8px;
+    /* ---- Accordion ---- */
+    .accordion-item {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
       overflow: hidden;
-      transition: border-color 0.2s;
     }
-    .faq-item.open {
-      border-color: var(--accent);
-    }
-    .faq-question {
+    .accordion-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
+      gap: 12px;
+      padding: 16px;
       cursor: pointer;
       user-select: none;
-      gap: 12px;
+      -webkit-user-select: none;
     }
-    .faq-question-text {
+    .accordion-header:hover { background: #fafafa; }
+    .accordion-q {
       font-size: 0.88rem;
-      font-weight: 600;
+      font-weight: 500;
       color: var(--text);
-      line-height: 1.4;
+      line-height: 1.45;
+      flex: 1;
     }
-    .faq-item.open .faq-question-text {
-      color: var(--accent);
+    .accordion-q .q-label {
+      display: inline-block;
+      color: var(--red);
+      font-weight: 700;
+      margin-right: 4px;
     }
-    .faq-chevron {
+    .accordion-item.open .accordion-q { color: var(--red); }
+    .accordion-chevron {
+      font-size: 0.75rem;
+      color: var(--red);
       flex-shrink: 0;
-      color: var(--text-dim);
-      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.25s ease;
+      display: inline-block;
     }
-    .faq-item.open .faq-chevron {
-      transform: rotate(180deg);
-      color: var(--accent);
-    }
-    .faq-answer {
+    .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+    .accordion-body {
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s;
+      transition: max-height 0.28s ease, padding 0.2s ease;
       padding: 0 16px;
     }
-    .faq-item.open .faq-answer {
-      max-height: 600px;
+    .accordion-item.open .accordion-body {
+      max-height: 500px;
       padding: 0 16px 16px;
     }
-    .faq-answer-inner {
-      font-size: 0.84rem;
+    .accordion-answer {
+      font-size: 0.85rem;
       color: var(--text-muted);
       line-height: 1.7;
       border-top: 1px solid var(--border);
       padding-top: 12px;
     }
-    .faq-answer-inner strong { color: var(--text); }
-    .faq-answer-inner a {
-      color: var(--accent);
-      text-decoration: none;
+    .accordion-answer .en {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 4px;
     }
-    .faq-answer-inner a:hover { text-decoration: underline; }
-    .faq-answer-inner ul {
-      margin: 8px 0 0 16px;
-    }
-    .faq-answer-inner ul li { margin-bottom: 4px; }
 
-    /* No results state */
-    .no-results {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      display: none;
-    }
-    .no-results-icon { font-size: 2.5rem; margin-bottom: 12px; }
-
-    /* Contact support CTA */
-    .support-cta {
-      background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(245,158,11,0.06));
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+    /* ---- Contact CTA ---- */
+    .contact-cta {
+      background: var(--white);
+      margin: 16px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
       padding: 20px;
       text-align: center;
-      margin-top: 8px;
     }
-    .support-cta h3 { font-size: 0.95rem; margin-bottom: 6px; }
-    .support-cta p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; }
-    .support-cta .btn-support {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-sm);
-      padding: 10px 20px;
-      font-family: var(--font);
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .support-cta .btn-support:hover { background: var(--accent-hover); }
+    .contact-cta .cta-icon { font-size: 2rem; margin-bottom: 8px; }
+    .contact-cta h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; }
+    .contact-cta p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
   </style>
 </head>
 <body>
-  <!-- Nav injected by JS -->
 
-  <div class="page">
-    <!-- Back -->
-    <div id="back-btn"></div>
+<div class="page">
 
-    <!-- Hero -->
-    <div class="faq-hero">
-      <h1>❓ Help & FAQ</h1>
-      <p>Find answers to common questions about Oripalot</p>
-    </div>
+  <!-- Back row -->
+  <a href="mypage.html" class="back-row">よくある質問 / FAQ</a>
 
-    <!-- Search -->
-    <div class="faq-search">
-      <svg class="faq-search-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-      </svg>
-      <input type="text" id="faq-search-input" placeholder="Search questions..." oninput="filterFAQ(this.value)" />
-    </div>
-
-    <!-- Category chips -->
-    <div class="faq-cats" id="cat-chips">
-      <div class="cat-chip active" onclick="scrollToCategory('all', this)">All</div>
-      <div class="cat-chip" onclick="scrollToCategory('about', this)">About</div>
-      <div class="cat-chip" onclick="scrollToCategory('coins', this)">Coins</div>
-      <div class="cat-chip" onclick="scrollToCategory('draws', this)">Draws</div>
-      <div class="cat-chip" onclick="scrollToCategory('prizes', this)">Prizes</div>
-      <div class="cat-chip" onclick="scrollToCategory('payments', this)">Payments</div>
-      <div class="cat-chip" onclick="scrollToCategory('account', this)">Account</div>
-    </div>
-
-    <!-- FAQ Sections -->
-    <div id="faq-container">
-
-      <!-- Category: About Oripalot -->
-      <div class="faq-category" id="cat-about">
-        <div class="faq-category-header">
-          <span class="faq-category-icon">🎴</span>
-          <span class="faq-category-title">About Oripalot</span>
-          <span class="faq-category-count">3 questions</span>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What is Oripalot?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Oripalot is a Japan-based <strong>online oripa (digital trading card lottery) platform</strong>. Players purchase coin packs and use those coins to enter draws for sealed trading card products — such as Pokemon, Yu-Gi-Oh!, and more. Unlike physical card packs, oripa draws determine your prize digitally, with the physical card shipped to your door.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">Is Oripalot free to play?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              You can join Oripalot for free and receive a <strong>welcome bonus of Free Coins</strong> to try your first draws at no cost. However, most premium oripa draws require purchasing Oripa Coins. Free Coins are also awarded through daily quests, campaigns, and level-up bonuses.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What countries can I play from?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Oripalot is currently available to residents of <strong>Japan only</strong>. Physical prize shipping is limited to Japanese domestic addresses. We plan to expand to additional regions in the future — follow our official LINE and X accounts for updates.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category: Coins & Currency -->
-      <div class="faq-category" id="cat-coins">
-        <div class="faq-category-header">
-          <span class="faq-category-icon">🪙</span>
-          <span class="faq-category-title">Coins & Currency</span>
-          <span class="faq-category-count">4 questions</span>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What are Oripa Coins?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              <strong>Oripa Coins</strong> (🪙) are the primary paid currency on Oripalot. They are purchased with Japanese Yen and can be used for any oripa draw. 1 Oripa Coin = ¥1 in draw value. Purchased coins do not expire as long as your account remains active.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What are Free Coins?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              <strong>Free Coins</strong> (💚) are bonus coins earned through:
-              <ul>
-                <li>Registration bonus</li>
-                <li>Daily quest completions</li>
-                <li>Level-up rewards</li>
-                <li>Campaign and event bonuses</li>
-              </ul>
-              Free Coins can be used on <strong>designated free-coin-eligible draws</strong> only. They cannot be withdrawn or exchanged for cash.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">Do coins expire?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              <strong>Oripa Coins</strong> purchased with real money do not expire while your account is in good standing. <strong>Free Coins</strong> expire <strong>90 days</strong> after they are issued. You can always check your coin expiry dates in your Wallet page.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">How do I check my coin balance?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Your coin balances are always displayed in the <strong>top navigation bar</strong> on every page. For a full breakdown including transaction history and expiry dates, visit your <a href="wallet.html">Wallet page</a>.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category: Playing Oripa Draws -->
-      <div class="faq-category" id="cat-draws">
-        <div class="faq-category-header">
-          <span class="faq-category-icon">🎲</span>
-          <span class="faq-category-title">Playing Oripa Draws</span>
-          <span class="faq-category-count">4 questions</span>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">How do Oripa draws work?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Each oripa draw is a <strong>sealed digital lottery</strong>. A pool of prizes is set before the draw opens. When you enter a draw, a random prize from that pool is assigned to you. The result is determined the moment you draw — there is no manipulation after purchase. Your prize is then held in your Prize Box until you request shipping.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What is the payout ratio (RTP)?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Oripalot targets a <strong>payout ratio of 75–90%</strong> across all draws, meaning the total market value of prizes in a draw pool represents at least 75% of the total entry cost for that pool. Individual RTP varies by draw type and is displayed on each draw's detail page.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">Can I draw multiple times?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Yes! Most draws allow <strong>single draws and multi-draws</strong> (e.g. 5x, 10x at a time). Multi-draws are processed simultaneously and may offer a small discount. Each individual entry is still a separate random outcome from the prize pool.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What happens when all entries are sold?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              When the last entry in a draw pool is sold, the draw <strong>closes automatically</strong>. Any unsold entries that expire (for time-limited draws) are removed from the pool and the draw closes early. The final remaining prize is awarded to the final draw entrant.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category: Prizes & Shipping -->
-      <div class="faq-category" id="cat-prizes">
-        <div class="faq-category-header">
-          <span class="faq-category-icon">📦</span>
-          <span class="faq-category-title">Prizes & Shipping</span>
-          <span class="faq-category-count">5 questions</span>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">How do I receive my prize?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Won prizes are stored in your <strong>Prize Box</strong>. To receive them physically, go to Prize Box → select the items → tap "Request Shipping." You can consolidate multiple prizes into one shipment. Once dispatched, you'll receive a tracking number by email.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">How long does shipping take?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Standard domestic shipping within Japan typically takes <strong>3–7 business days</strong> after your shipping request is processed. Processing takes 1–3 business days. Express options may be available for an additional fee.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What if my prize expires before I request shipping?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Prizes in your Prize Box are held for <strong>90 days</strong> from the date won. You will receive reminder notifications at 30 days and 7 days before expiry. If a prize expires unclaimed, it cannot be recovered. We strongly recommend requesting shipping promptly.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">Can I convert prizes to coins?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Yes! Most prizes can be <strong>converted to Oripa Coins</strong> instead of shipped. The coin conversion rate is shown on each prize in your Prize Box (typically 30–60% of the prize's market value). Converted coins are added to your balance immediately.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What is the minimum for shipping requests?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              There is no minimum number of prizes required to request shipping. However, a <strong>flat shipping fee of ¥550 (incl. tax)</strong> applies per shipment regardless of how many items are included. Bundling multiple prizes saves on shipping costs.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category: Payments & Purchases -->
-      <div class="faq-category" id="cat-payments">
-        <div class="faq-category-header">
-          <span class="faq-category-icon">💳</span>
-          <span class="faq-category-title">Payments & Purchases</span>
-          <span class="faq-category-count">3 questions</span>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What payment methods are accepted?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Oripalot accepts:
-              <ul>
-                <li><strong>Credit/Debit Cards</strong> — Visa, Mastercard, JCB, AMEX</li>
-                <li><strong>Google Pay</strong></li>
-                <li><strong>Apple Pay</strong></li>
-                <li><strong>Convenience Store payment</strong> — Lawson, FamilyMart, 7-Eleven, Ministop</li>
-              </ul>
-              All transactions are processed securely in Japanese Yen (JPY).
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">Are there purchase limits?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Yes. To promote responsible play, Oripalot applies the following monthly limits:
-              <ul>
-                <li><strong>Standard accounts:</strong> ¥100,000 / month</li>
-                <li><strong>KYC-verified accounts:</strong> ¥300,000 / month</li>
-                <li><strong>Users under 18:</strong> ¥10,000 / month</li>
-              </ul>
-              Limits reset on the 1st of each month (JST).
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">Can I get a refund?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              <strong>Coin purchases are generally non-refundable</strong> once the coins have been used in a draw. Unused coins from a purchase may be refunded within 8 days of purchase if you have not used them, subject to verification. Please contact support for refund requests.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Category: Account & KYC -->
-      <div class="faq-category" id="cat-account">
-        <div class="faq-category-header">
-          <span class="faq-category-icon">🪪</span>
-          <span class="faq-category-title">Account & KYC</span>
-          <span class="faq-category-count">3 questions</span>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">When is KYC required?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              KYC (Know Your Customer) verification is required when:
-              <ul>
-                <li>Your cumulative purchases exceed <strong>¥50,000</strong></li>
-                <li>You request a shipping address for prizes</li>
-                <li>You wish to increase your monthly purchase limit above ¥100,000</li>
-              </ul>
-              KYC is processed within 1–2 business days.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What ID documents are accepted for KYC?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              We accept any of the following Japanese government-issued documents:
-              <ul>
-                <li>運転免許証 (Driver's License)</li>
-                <li>マイナンバーカード (My Number Card)</li>
-                <li>パスポート (Passport)</li>
-                <li>健康保険証 (Health Insurance Card) + supplemental address document</li>
-              </ul>
-              Documents must be current and clearly photographed.
-            </div>
-          </div>
-        </div>
-
-        <div class="faq-item" onclick="toggleFAQ(this)">
-          <div class="faq-question">
-            <span class="faq-question-text">What are the rules for users under 18?</span>
-            <svg class="faq-chevron" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
-          </div>
-          <div class="faq-answer">
-            <div class="faq-answer-inner">
-              Users under 18 years of age are subject to stricter controls:
-              <ul>
-                <li><strong>Monthly purchase limit:</strong> ¥10,000</li>
-                <li><strong>Parental consent</strong> must be confirmed at registration</li>
-                <li>Access to certain premium draws may be restricted</li>
-                <li>KYC with parental guardian information is required before first purchase</li>
-              </ul>
-              These rules comply with Japanese consumer protection law.
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- No results message -->
-      <div class="no-results" id="no-results">
-        <div class="no-results-icon">🔍</div>
-        <p>No questions match your search.<br>Try different keywords.</p>
-      </div>
-
-    </div>
-
-    <!-- Support CTA -->
-    <div class="support-cta mt-16">
-      <h3>Still have questions?</h3>
-      <p>Our support team is available 10:00–22:00 JST, 7 days a week.</p>
-      <button class="btn-support" onclick="showToast('Opening support chat...', 'info')">
-        💬 Contact Support
-      </button>
+  <!-- Category Tabs -->
+  <div class="cat-tabs-wrapper">
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="showCat('account', this)">会員登録・アカウント</button>
+      <button class="cat-tab" onclick="showCat('coins', this)">コイン・ポイント・決済</button>
+      <button class="cat-tab" onclick="showCat('gacha', this)">オリパ・ガチャの利用方法</button>
+      <button class="cat-tab" onclick="showCat('shipping', this)">商品発送・お届け</button>
+      <button class="cat-tab" onclick="showCat('trouble', this)">トラブル・その他</button>
     </div>
   </div>
 
-  <script src="../assets/nav.js"></script>
-  <script>
-    injectNav('faq');
-    document.getElementById('back-btn').innerHTML = backButton('Back', '../index.html');
+  <!-- 会員登録・アカウント -->
+  <div id="cat-account" class="faq-section active">
+    <div class="faq-section-title">会員登録・アカウント</div>
 
-    function toggleFAQ(el) {
-      const isOpen = el.classList.contains('open');
-      // Close all in the same category
-      const siblings = el.parentElement.querySelectorAll('.faq-item');
-      siblings.forEach(s => s.classList.remove('open'));
-      // Toggle this one
-      if (!isOpen) {
-        el.classList.add('open');
-      }
-    }
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>会員登録はどうすればいいですか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">How do I register?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          メールアドレスとパスワードを入力して登録ボタンを押してください。その後、確認メールが届きますので、リンクをクリックして登録を完了させてください。
+          <span class="en">Enter your email address and password, then click the register button. You'll receive a confirmation email — click the link to complete registration.</span>
+        </div>
+      </div>
+    </div>
 
-    function scrollToCategory(id, chipEl) {
-      // Update active chip
-      document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-      chipEl.classList.add('active');
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>ログインができません<br/><span style="font-size:0.78rem;color:var(--text-dim);">I can't log in</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          メールアドレスとパスワードをご確認ください。入力を忘れた場合は「パスワードを忘れた方はこちら」からリセットできます。それでも解決しない場合はサポートまでお問い合わせください。
+          <span class="en">Please check your email address and password. If you've forgotten it, reset via "Forgot Password". If still unresolved, contact support.</span>
+        </div>
+      </div>
+    </div>
 
-      if (id === 'all') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
-      const target = document.getElementById('cat-' + id);
-      if (target) {
-        const offset = target.getBoundingClientRect().top + window.scrollY - 120;
-        window.scrollTo({ top: offset, behavior: 'smooth' });
-      }
-    }
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>パスワードを忘れました<br/><span style="font-size:0.78rem;color:var(--text-dim);">I forgot my password</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          ログイン画面の「パスワードを忘れた方はこちら」をタップし、登録済みのメールアドレスを入力するとパスワードリセットメールが届きます。
+          <span class="en">Tap "Forgot Password" on the login screen and enter your registered email. You'll receive a password reset email.</span>
+        </div>
+      </div>
+    </div>
 
-    function filterFAQ(query) {
-      const q = query.toLowerCase().trim();
-      const categories = document.querySelectorAll('.faq-category');
-      let anyVisible = false;
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>アカウントを退会するには<br/><span style="font-size:0.78rem;color:var(--text-dim);">How to delete my account</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          マイページ → 設定 → 退会申請から手続きを行ってください。残高コインは退会時に全て失効しますのでご注意ください。
+          <span class="en">Go to My Page → Settings → Delete Account. Please note that any remaining coin balance will be forfeited upon deletion.</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      categories.forEach(cat => {
-        const items = cat.querySelectorAll('.faq-item');
-        let catVisible = false;
+  <!-- コイン・ポイント・決済 -->
+  <div id="cat-coins" class="faq-section">
+    <div class="faq-section-title">コイン・ポイント・決済</div>
 
-        items.forEach(item => {
-          const qText = item.querySelector('.faq-question-text').textContent.toLowerCase();
-          const aText = item.querySelector('.faq-answer-inner').textContent.toLowerCase();
-          const match = !q || qText.includes(q) || aText.includes(q);
-          item.style.display = match ? '' : 'none';
-          if (match) catVisible = true;
-        });
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>オリパコインとは何ですか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">What are Oripa Coins?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          オリパコインは有料で購入できるコインです。オリパガチャを引くのに使用します。1コイン = 1円相当です。
+          <span class="en">Oripa Coins are purchased coins used to draw Oripa Gacha. 1 coin = approximately ¥1.</span>
+        </div>
+      </div>
+    </div>
 
-        cat.style.display = catVisible ? '' : 'none';
-        if (catVisible) anyVisible = true;
-      });
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>フリーコインとは何ですか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">What are Free Coins?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          フリーコインは無料で配布されるコインです。デイリーボーナスやキャンペーンで入手できます。一部のオリパガチャに使用できますが、換金・払い戻しはできません。
+          <span class="en">Free Coins are distributed at no charge via daily bonuses and campaigns. They can be used on select Oripa Gacha but cannot be refunded or exchanged for cash.</span>
+        </div>
+      </div>
+    </div>
 
-      document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
-    }
-  </script>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>コインに有効期限はありますか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">Do coins expire?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          オリパコインは購入日から180日間、フリーコインは付与日から30日間が有効期限です。期限切れのコインは自動的に失効しますのでご注意ください。
+          <span class="en">Oripa Coins are valid for 180 days from purchase; Free Coins are valid for 30 days from grant. Expired coins are forfeited automatically.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>支払い方法は何が使えますか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">What payment methods are available?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          クレジットカード（VISA / Mastercard / JCB / AMEX）、Google Pay、Apple Pay、コンビニ払い（ローソン・ファミリーマート・セブンイレブン・ミニストップ）がご利用いただけます。
+          <span class="en">We accept credit cards (VISA/Mastercard/JCB/AMEX), Google Pay, Apple Pay, and convenience store payment (Lawson, FamilyMart, 7-Eleven, Ministop).</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>未成年者の利用制限について<br/><span style="font-size:0.78rem;color:var(--text-dim);">Purchase limits for minors</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          18歳未満の方はサービスをご利用いただけません。18歳以上でも高校生の方は一部制限が適用される場合があります。年齢確認（KYC）が必要です。
+          <span class="en">Users under 18 cannot use this service. Even those 18+ who are still in high school may face additional restrictions. Age verification (KYC) is required.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- オリパ・ガチャの利用方法 -->
+  <div id="cat-gacha" class="faq-section">
+    <div class="faq-section-title">オリパ・ガチャの利用方法</div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>オリパガチャとは？<br/><span style="font-size:0.78rem;color:var(--text-dim);">What is Oripa Gacha?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          オリパガチャとは、トレーディングカードやフィギュアなどのランダム商品を、コインを消費して引くことができるデジタルくじサービスです。当たりは発送リクエストを通じてお手元に届きます。
+          <span class="en">Oripa Gacha is a digital lottery service where you spend coins to win random trading cards, figures, and other collectibles. Prizes are delivered via a shipping request.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>当選確率（RTP）はどのくらい？<br/><span style="font-size:0.78rem;color:var(--text-dim);">What is the payout ratio?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          各オリパの商品詳細ページに当選確率（RTP）が記載されています。全てのオリパは消費者庁のガイドラインに従い、確率の開示が義務付けられています。
+          <span class="en">Each Oripa's product detail page lists the payout ratio (RTP). All Oripa products are required to disclose odds in accordance with Consumer Affairs Agency guidelines.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 商品発送・お届け -->
+  <div id="cat-shipping" class="faq-section">
+    <div class="faq-section-title">商品発送・お届け</div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>商品はいつ届きますか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">When will I receive my prize?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          発送リクエスト後、3〜7営業日でお届けします。離島や一部地域は追加で数日かかる場合があります。
+          <span class="en">After submitting a shipping request, delivery takes 3–7 business days. Remote islands or select areas may take additional days.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>発送リクエストの最低金額は？<br/><span style="font-size:0.78rem;color:var(--text-dim);">Minimum amount for shipping?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          発送リクエストは¥500相当以上の景品が溜まった時点でリクエスト可能です。¥500未満の景品はコインへの交換をご利用ください。
+          <span class="en">Shipping requests are available once prizes worth ¥500 or more accumulate. Prizes below ¥500 can be exchanged for coins instead.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>コインへの交換はできますか？<br/><span style="font-size:0.78rem;color:var(--text-dim);">Can I convert prizes to coins?</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          はい、一部の景品は景品価値の一定割合（通常50〜80%）のオリパコインに交換できます。交換比率は景品によって異なります。
+          <span class="en">Yes, select prizes can be exchanged for Oripa Coins at a set percentage of the prize value (typically 50–80%). The rate varies by prize.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- トラブル・その他 -->
+  <div id="cat-trouble" class="faq-section">
+    <div class="faq-section-title">トラブル・その他</div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>決済が失敗しました<br/><span style="font-size:0.78rem;color:var(--text-dim);">My payment failed</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          カード情報を再確認の上、別の決済方法もお試しください。カード会社側でブロックされている可能性もありますので、カード会社へもお問い合わせください。
+          <span class="en">Please re-check your card details and try another payment method. Your card issuer may have blocked the transaction — contact them as well.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleFaq(this)">
+        <div class="accordion-q"><span class="q-label">Q.</span>コインが反映されません<br/><span style="font-size:0.78rem;color:var(--text-dim);">My coins didn't appear</span></div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-answer">
+          購入後、最大5分ほどかかる場合があります。それ以上経過しても反映されない場合は、注文番号をご確認の上サポートまでお問い合わせください。
+          <span class="en">It may take up to 5 minutes after purchase. If still not reflected after that, please contact support with your order number.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact CTA -->
+  <div class="contact-cta">
+    <div class="cta-icon">💬</div>
+    <h3>解決しない場合はサポートへ</h3>
+    <p>上記で解決しない場合は、お気軽にカスタマーサポートまでお問い合わせください。<br/><span style="font-size:0.76rem;color:var(--text-dim);">If your question wasn't answered, contact our customer support team.</span></p>
+    <button class="btn btn-red" onclick="showToast('サポートへ連絡中...', 'info')">お問い合わせ / Contact Support</button>
+  </div>
+
+</div>
+
+<script src="../assets/nav.js"></script>
+<script>
+  injectNav('mypage');
+
+  function showCat(id, el) {
+    document.querySelectorAll('.cat-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.faq-section').forEach(function(s) { s.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('cat-' + id).classList.add('active');
+    document.querySelectorAll('.accordion-item.open').forEach(function(item) {
+      item.classList.remove('open');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleFaq(headerEl) {
+    var item = headerEl.closest('.accordion-item');
+    var isOpen = item.classList.contains('open');
+    item.closest('.faq-section').querySelectorAll('.accordion-item.open').forEach(function(el) {
+      if (el !== item) el.classList.remove('open');
+    });
+    item.classList.toggle('open', !isOpen);
+  }
+</script>
 </body>
 </html>

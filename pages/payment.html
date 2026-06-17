@@ -1,252 +1,209 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Payment — Oripalot</title>
-  <link rel="stylesheet" href="../assets/style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>オリパロット — お支払い方法</title>
+  <link rel="stylesheet" href="../assets/style.css"/>
   <style>
     /* ---- Payment Method Tabs ---- */
     .pay-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 24px;
+      display: flex;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 57px;
+      z-index: 90;
     }
     .pay-tab {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      padding: 10px 4px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-size: 0.7rem;
-      color: var(--text-muted);
+      flex: 1;
+      padding: 12px 4px;
+      text-align: center;
+      font-size: 0.75rem;
       font-weight: 600;
-      transition: all 0.2s;
-      user-select: none;
+      font-family: var(--font);
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .pay-tab .tab-icon { font-size: 1.1rem; line-height: 1; }
     .pay-tab.active {
-      background: rgba(124,58,237,0.15);
-      border-color: var(--accent);
-      color: var(--accent);
+      color: var(--red);
+      border-bottom-color: var(--red);
     }
-    .pay-tab:hover:not(.active) {
-      border-color: rgba(124,58,237,0.4);
+
+    /* ---- Order Summary ---- */
+    .order-card {
+      margin: 16px;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+    .order-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .order-row:last-of-type { border-bottom: none; }
+    .order-row .label { color: var(--text-muted); }
+    .order-row .value { font-weight: 700; }
+    .order-amount {
+      font-size: 1.5rem;
+      font-weight: 900;
       color: var(--text);
+      text-align: right;
+    }
+    .billing-note {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 8px;
+      line-height: 1.5;
     }
 
-    /* ---- Tab Panels ---- */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    /* ---- Payment Panels ---- */
+    .pay-panel { display: none; padding: 16px; }
+    .pay-panel.active { display: block; }
 
-    /* ---- Card Preview ---- */
+    /* ---- Credit Card Widget ---- */
     .card-preview {
-      background: linear-gradient(135deg, #1e0a4e 0%, #4c1d95 50%, #7c3aed 100%);
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       border-radius: 14px;
       padding: 20px;
       margin-bottom: 20px;
+      color: #fff;
       position: relative;
       overflow: hidden;
-      height: 170px;
-      box-shadow: 0 8px 32px rgba(124,58,237,0.3);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
     .card-preview::before {
       content: '';
       position: absolute;
       top: -30px; right: -30px;
-      width: 140px; height: 140px;
+      width: 120px; height: 120px;
       background: rgba(255,255,255,0.05);
       border-radius: 50%;
     }
     .card-preview::after {
       content: '';
       position: absolute;
-      bottom: -40px; left: 40px;
+      bottom: -40px; left: -20px;
       width: 160px; height: 160px;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.03);
       border-radius: 50%;
     }
     .card-chip {
       width: 36px; height: 26px;
-      background: linear-gradient(135deg, #f59e0b, #d97706);
+      background: linear-gradient(135deg, #FFD700, #FFA500);
       border-radius: 5px;
       margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
     }
     .card-number-preview {
-      font-size: 1rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.9);
-      letter-spacing: 0.12em;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 3px;
       margin-bottom: 16px;
-      font-variant-numeric: tabular-nums;
-      position: relative;
-      z-index: 1;
+      font-family: 'Courier New', monospace;
+      opacity: 0.9;
     }
-    .card-footer-preview {
+    .card-bottom {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
-      position: relative;
-      z-index: 1;
     }
-    .card-footer-preview .card-name {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: rgba(255,255,255,0.85);
+    .card-holder-label, .card-expiry-label {
+      font-size: 0.62rem;
+      opacity: 0.6;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      max-width: 60%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
     }
-    .card-footer-preview .card-expiry {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.7);
-      text-align: right;
-    }
-    .card-footer-preview .card-expiry small {
-      display: block;
-      font-size: 0.6rem;
-      color: rgba(255,255,255,0.5);
-    }
-    .card-network-icon {
-      position: absolute;
-      top: 18px; right: 18px;
-      font-size: 1.4rem;
-      font-weight: 900;
-      color: rgba(255,255,255,0.4);
-      z-index: 1;
+    .card-holder-name { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    .card-expiry-val { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; }
+    .card-network {
+      font-size: 1.3rem;
+      opacity: 0.85;
     }
 
     /* ---- Accepted Cards ---- */
-    .card-networks {
+    .accepted-cards {
       display: flex;
       gap: 8px;
+      align-items: center;
       margin-bottom: 16px;
       flex-wrap: wrap;
     }
-    .network-badge {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 4px 8px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    /* ---- Row layout for expiry/cvv ---- */
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    /* ---- Save card checkbox ---- */
-    .save-card-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      background: var(--bg-input);
+    .card-badge {
+      padding: 4px 10px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: border-color 0.2s;
-      margin-bottom: 16px;
-    }
-    .save-card-row:hover { border-color: var(--accent); }
-    .save-card-row input[type="checkbox"] {
-      width: 18px; height: 18px;
-      accent-color: var(--accent);
-      cursor: pointer;
-    }
-    .save-card-row label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      cursor: pointer;
-      flex: 1;
-    }
-
-    /* ---- Google Pay / Apple Pay panels ---- */
-    .wallet-pay-panel {
-      text-align: center;
-      padding: 20px 0;
-    }
-    .gpay-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #fff;
-      color: #000;
-      border: none;
-      border-radius: var(--radius);
-      padding: 16px 24px;
-      font-size: 1rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      margin-bottom: 16px;
-      transition: opacity 0.2s;
-      font-family: var(--font);
+      color: var(--text-muted);
+      background: var(--white);
     }
-    .gpay-btn:hover { opacity: 0.9; }
-    .gpay-btn .g-logo {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #4285F4 25%, #EA4335 25%, #EA4335 50%, #FBBC05 50%, #FBBC05 75%, #34A853 75%);
-    }
-    .apay-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+    .card-badge.visa   { color: #1A1F71; border-color: #1A1F71; }
+    .card-badge.mc     { color: #EB001B; border-color: #EB001B; }
+    .card-badge.jcb    { color: #003087; border-color: #003087; }
+    .card-badge.amex   { color: #007BC1; border-color: #007BC1; }
+
+    /* ---- Google Pay / Apple Pay ---- */
+    .wallet-pay-section { text-align: center; padding: 8px 0; }
+    .btn-gpay {
       background: #000;
       color: #fff;
-      border: 1px solid #333;
+      border: none;
       border-radius: var(--radius);
-      padding: 16px 24px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
+      padding: 14px 24px;
       width: 100%;
-      margin-bottom: 16px;
-      transition: opacity 0.2s;
+      font-size: 1rem;
+      font-weight: 600;
       font-family: var(--font);
-    }
-    .apay-btn:hover { opacity: 0.85; }
-    .wallet-info {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      line-height: 1.6;
-    }
-    .security-badges {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .sec-badge {
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 5px 10px;
-      font-size: 0.72rem;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .btn-apay {
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px 24px;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .security-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      font-size: 0.78rem;
       color: var(--text-muted);
+      margin-top: 8px;
     }
 
     /* ---- Convenience Store ---- */
@@ -256,563 +213,318 @@
       gap: 10px;
       margin-bottom: 20px;
     }
-    .store-option {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px;
+    .store-tile {
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      text-align: center;
       cursor: pointer;
-      text-align: center;
-      transition: all 0.2s;
-      position: relative;
+      transition: all 0.15s;
     }
-    .store-option:hover { border-color: rgba(124,58,237,0.5); }
-    .store-option.selected {
-      border-color: var(--accent);
-      background: rgba(124,58,237,0.1);
-    }
-    .store-option .store-name {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 3px;
-    }
-    .store-option .store-hours {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-    }
-    .store-option .store-emoji {
-      font-size: 1.6rem;
-      margin-bottom: 6px;
-    }
-    .store-option .selected-check {
-      position: absolute;
-      top: 6px; right: 6px;
-      width: 16px; height: 16px;
-      background: var(--accent);
-      border-radius: 50%;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.6rem;
-      color: #fff;
-    }
-    .store-option.selected .selected-check { display: flex; }
-
-    .convenience-steps {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      margin-bottom: 16px;
-    }
-    .convenience-steps h4 {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-    .convenience-steps .c-step {
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 8px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-    }
-    .convenience-steps .c-step:last-child { margin-bottom: 0; }
-    .c-step-num {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-
-    /* Payment code display */
+    .store-tile:hover { border-color: var(--red); }
+    .store-tile.selected { border-color: var(--red); background: var(--red-light); }
+    .store-tile .store-icon { font-size: 1.8rem; margin-bottom: 6px; }
+    .store-tile .store-name { font-size: 0.8rem; font-weight: 700; color: var(--text); }
     .payment-code-box {
-      background: var(--bg-card);
-      border: 2px solid var(--accent);
-      border-radius: var(--radius);
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 16px;
-      display: none;
-    }
-    .payment-code-box.visible { display: block; }
-    .payment-code-box .code-label {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .payment-code-box .code-number {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--accent-gold);
-      letter-spacing: 0.08em;
-      font-variant-numeric: tabular-nums;
-      margin-bottom: 12px;
-    }
-    .qr-placeholder {
-      width: 100px; height: 100px;
-      border: 2px dashed var(--border);
-      border-radius: var(--radius-sm);
-      margin: 0 auto 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-dim);
-      flex-direction: column;
-      gap: 4px;
-      font-size: 0.7rem;
-    }
-    .qr-placeholder svg { opacity: 0.4; }
-    .code-expiry-note {
-      font-size: 0.75rem;
-      color: var(--warning);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-    }
-
-    /* ---- Order Summary ---- */
-    .order-summary {
-      background: var(--bg-card);
+      background: var(--bg);
       border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 18px;
-      margin-top: 8px;
-    }
-    .order-summary h3 {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      margin-bottom: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .order-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      font-size: 0.88rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .order-row:last-of-type { border-bottom: none; }
-    .order-row .o-label { color: var(--text-muted); }
-    .order-row .o-value { font-weight: 700; color: var(--text); }
-    .order-row .o-value.gold { color: var(--accent-gold); }
-    .order-total-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 0 0;
-      margin-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-    .order-total-row .total-label { font-size: 0.9rem; font-weight: 700; color: var(--text); }
-    .order-total-row .total-amount { font-size: 1.25rem; font-weight: 700; color: var(--accent-gold); }
-
-    .btn-pay {
-      background: linear-gradient(135deg, var(--accent), #6d28d9);
-      color: #fff;
-      border: none;
       border-radius: var(--radius);
       padding: 16px;
-      font-family: var(--font);
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 16px;
-      transition: opacity 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .btn-pay:hover { opacity: 0.9; }
-
-    .secure-note {
       text-align: center;
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      margin-top: 10px;
+      margin-bottom: 12px;
+    }
+    .payment-code-label { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; }
+    .payment-code {
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+    }
+    .qr-placeholder {
+      width: 120px; height: 120px;
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      margin: 12px auto;
+      font-size: 2.5rem;
     }
+
+    /* ---- Confirm Button area ---- */
+    .confirm-area {
+      padding: 16px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+      position: sticky;
+      bottom: 70px;
+      z-index: 80;
+    }
+
+    /* ---- Loading spinner ---- */
+    .spinner {
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <!-- Nav injected by JS -->
 
-  <div class="page">
-    <div id="back-btn"></div>
+<div class="page">
 
-    <div class="section-header">
-      <h1>💳 Payment</h1>
-      <p>Choose your preferred payment method</p>
-    </div>
+  <!-- Back row -->
+  <a href="coin-purchase.html" class="back-row">お支払い方法 / Payment Method</a>
 
-    <!-- Payment Method Tabs -->
-    <div class="pay-tabs">
-      <div class="pay-tab active" onclick="switchTab('card', this)">
-        <span class="tab-icon">💳</span>
-        Credit Card
-      </div>
-      <div class="pay-tab" onclick="switchTab('gpay', this)">
-        <span class="tab-icon">G</span>
-        Google Pay
-      </div>
-      <div class="pay-tab" onclick="switchTab('apay', this)">
-        <span class="tab-icon"></span>
-        Apple Pay
-      </div>
-      <div class="pay-tab" onclick="switchTab('cvs', this)">
-        <span class="tab-icon">🏪</span>
-        Conv. Store
-      </div>
-    </div>
-
-    <!-- TAB: Credit Card -->
-    <div class="tab-panel active" id="tab-card">
-
-      <!-- Card Preview -->
-      <div class="card-preview">
-        <div class="card-chip"></div>
-        <div class="card-number-preview" id="preview-number">•••• •••• •••• ••••</div>
-        <div class="card-footer-preview">
-          <div class="card-name" id="preview-name">CARDHOLDER NAME</div>
-          <div class="card-expiry">
-            <small>EXPIRES</small>
-            <span id="preview-expiry">MM / YY</span>
-          </div>
-        </div>
-        <div class="card-network-icon" id="preview-network">💳</div>
-      </div>
-
-      <!-- Accepted Networks -->
-      <div class="card-networks">
-        <span class="network-badge">VISA</span>
-        <span class="network-badge">Mastercard</span>
-        <span class="network-badge">JCB</span>
-        <span class="network-badge">AMEX</span>
-      </div>
-
-      <!-- Card Number -->
-      <div class="form-group">
-        <label>Card Number</label>
-        <input type="text" id="card-number" placeholder="0000 0000 0000 0000" maxlength="19"
-          oninput="formatCardNumber(this)" autocomplete="cc-number" inputmode="numeric" />
-      </div>
-
-      <!-- Cardholder Name -->
-      <div class="form-group">
-        <label>Cardholder Name</label>
-        <input type="text" id="card-name" placeholder="TARO YAMADA"
-          oninput="updatePreviewName(this.value)" autocomplete="cc-name" style="text-transform:uppercase" />
-      </div>
-
-      <!-- Expiry + CVV -->
-      <div class="form-row">
-        <div class="form-group">
-          <label>Expiry (MM/YY)</label>
-          <input type="text" id="card-expiry" placeholder="MM/YY" maxlength="5"
-            oninput="formatExpiry(this)" autocomplete="cc-exp" inputmode="numeric" />
-        </div>
-        <div class="form-group">
-          <label>CVV</label>
-          <input type="text" id="card-cvv" placeholder="•••" maxlength="4"
-            oninput="this.value=this.value.replace(/\D/g,'')" autocomplete="cc-csc" inputmode="numeric" />
-        </div>
-      </div>
-
-      <!-- Save Card -->
-      <label class="save-card-row">
-        <input type="checkbox" id="save-card" />
-        <label for="save-card">Save this card for future purchases</label>
-      </label>
-
-    </div>
-
-    <!-- TAB: Google Pay -->
-    <div class="tab-panel" id="tab-gpay">
-      <div class="wallet-pay-panel">
-        <button class="gpay-btn" onclick="handleWalletPay('Google Pay')">
-          <div class="g-logo"></div>
-          Pay with Google Pay
-        </button>
-        <p class="wallet-info">You'll be redirected to Google Pay to securely complete your payment. No card details are stored on Oripalot servers.</p>
-        <div class="security-badges">
-          <div class="sec-badge">🔒 SSL Encrypted</div>
-          <div class="sec-badge">✓ PCI-DSS Compliant</div>
-          <div class="sec-badge">🛡 Fraud Protected</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: Apple Pay -->
-    <div class="tab-panel" id="tab-apay">
-      <div class="wallet-pay-panel">
-        <button class="apay-btn" onclick="handleWalletPay('Apple Pay')">
-           Pay with Apple Pay
-        </button>
-        <p class="wallet-info">Use Face ID or Touch ID to confirm your payment. Apple Pay keeps your card number private — a unique Device Account Number is used instead.</p>
-        <div class="security-badges">
-          <div class="sec-badge">🔒 SSL Encrypted</div>
-          <div class="sec-badge"> Face / Touch ID</div>
-          <div class="sec-badge">🛡 Tokenized Payment</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: Convenience Store -->
-    <div class="tab-panel" id="tab-cvs">
-
-      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;">Select your preferred convenience store:</p>
-
-      <div class="store-grid">
-        <div class="store-option" onclick="selectStore(this, 'Lawson')">
-          <div class="selected-check">✓</div>
-          <div class="store-emoji">🔵</div>
-          <div class="store-name">Lawson</div>
-          <div class="store-hours">Open 24h</div>
-        </div>
-        <div class="store-option" onclick="selectStore(this, 'FamilyMart')">
-          <div class="selected-check">✓</div>
-          <div class="store-emoji">🟢</div>
-          <div class="store-name">FamilyMart</div>
-          <div class="store-hours">Open 24h</div>
-        </div>
-        <div class="store-option" onclick="selectStore(this, '7-Eleven')">
-          <div class="selected-check">✓</div>
-          <div class="store-emoji">🔴</div>
-          <div class="store-name">7-Eleven</div>
-          <div class="store-hours">Open 24h</div>
-        </div>
-        <div class="store-option" onclick="selectStore(this, 'Ministop')">
-          <div class="selected-check">✓</div>
-          <div class="store-emoji">🟡</div>
-          <div class="store-name">Ministop</div>
-          <div class="store-hours">Open 24h</div>
-        </div>
-      </div>
-
-      <div class="convenience-steps">
-        <h4>How to pay at a convenience store:</h4>
-        <div class="c-step">
-          <div class="c-step-num">1</div>
-          <span>Generate your payment code below by confirming your order</span>
-        </div>
-        <div class="c-step">
-          <div class="c-step-num">2</div>
-          <span>Visit your selected store and go to the payment terminal / register</span>
-        </div>
-        <div class="c-step">
-          <div class="c-step-num">3</div>
-          <span>Enter your payment code or show the QR code to the cashier</span>
-        </div>
-        <div class="c-step">
-          <div class="c-step-num">4</div>
-          <span>Pay the exact amount in cash — your coins will be credited instantly</span>
-        </div>
-      </div>
-
-      <!-- Payment Code (shown after store selected) -->
-      <div class="payment-code-box" id="cvs-code-box">
-        <p class="code-label">Your Payment Code</p>
-        <div class="code-number" id="cvs-code-number">2026-0617-1234-5678</div>
-        <div class="qr-placeholder">
-          <svg width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm11-2h1v1h-1v-1zm2 0h1v1h-1v-1zm-4 2h1v1h-1v-1zm2 0h1v1h-1v-1zm2 0h1v1h-1v-1zm-4 2h1v1h-1v-1zm2 2h1v1h-1v-1zm2-2h1v1h-1v-1zm0 2h1v1h-1v-1z"/>
-          </svg>
-          QR Code
-        </div>
-        <div class="code-expiry-note">⏰ Code expires in 24 hours</div>
-      </div>
-
-    </div>
-
-    <!-- Order Summary (always visible) -->
-    <div class="order-summary">
-      <h3>Order Summary</h3>
-      <div class="order-row">
-        <span class="o-label">Package</span>
-        <span class="o-value" id="summary-package">3,000 Oripa Coins</span>
-      </div>
-      <div class="order-row">
-        <span class="o-label">Coins credited</span>
-        <span class="o-value gold" id="summary-coins">🪙 3,000</span>
-      </div>
-      <div class="order-row">
-        <span class="o-label">Bonus coins</span>
-        <span class="o-value" id="summary-bonus" style="color:var(--success)">—</span>
-      </div>
-      <div class="order-row">
-        <span class="o-label">Payment method</span>
-        <span class="o-value" id="summary-method">Credit Card</span>
-      </div>
-      <div class="order-total-row">
-        <span class="total-label">Total</span>
-        <span class="total-amount" id="summary-total">¥3,000</span>
-      </div>
-    </div>
-
-    <button class="btn-pay" id="pay-btn" onclick="confirmPayment()">
-      🔒 Confirm Payment
-    </button>
-
-    <p class="secure-note">
-      <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-      </svg>
-      Secured with 256-bit SSL encryption
-    </p>
+  <!-- Payment Method Tabs -->
+  <div class="pay-tabs">
+    <button class="pay-tab active" onclick="showPayTab('card', this)">クレジットカード</button>
+    <button class="pay-tab" onclick="showPayTab('gpay', this)">Google Pay</button>
+    <button class="pay-tab" onclick="showPayTab('apay', this)">Apple Pay</button>
+    <button class="pay-tab" onclick="showPayTab('cvs', this)">コンビニ</button>
   </div>
 
-  <script src="../assets/nav.js"></script>
-  <script>
-    injectNav('wallet');
-    document.getElementById('back-btn').innerHTML = backButton('Back', 'coin-purchase.html');
+  <!-- Order Summary -->
+  <div class="order-card">
+    <div class="order-title">購入内容 / Order Summary</div>
+    <div class="order-row">
+      <span class="label">オリパコイン / Oripa Coins</span>
+      <span class="value">🟡 10,000</span>
+    </div>
+    <div class="order-row">
+      <span class="label">フリーコイン / Free Coins</span>
+      <span class="value">💎 10,000</span>
+    </div>
+    <div class="order-row">
+      <span class="label">合計金額 / Amount</span>
+      <span class="order-amount">¥10,000</span>
+    </div>
+    <div class="billing-note">※クレジットカードの明細には「オリパロット」と表示されます。<br/>Your billing statement will show "ORIPALOT".</div>
+  </div>
 
-    // --- Read URL params to pre-fill order summary ---
-    (function() {
-      const params = new URLSearchParams(window.location.search);
-      const coins = params.get('coins');
-      const price = params.get('price');
-      const offer = params.get('offer');
+  <!-- CREDIT CARD TAB -->
+  <div id="panel-card" class="pay-panel active">
 
-      if (coins) {
-        const c = parseInt(coins).toLocaleString();
-        document.getElementById('summary-package').textContent = c + ' Oripa Coins';
-        document.getElementById('summary-coins').textContent = '🪙 ' + c;
-      }
-      if (price) {
-        document.getElementById('summary-total').textContent = price;
-      }
-      if (offer !== null) {
-        // Bonus info from special offers
-        const bonuses = ['+1,500', '+1,000', '+600', '+2,500'];
-        const b = bonuses[parseInt(offer)];
-        if (b) {
-          document.getElementById('summary-bonus').textContent = b + ' bonus coins';
-          document.getElementById('back-btn').innerHTML = backButton('Back to Offers', 'special-offers.html');
-        }
-      }
-    })();
+    <!-- Live card preview -->
+    <div class="card-preview">
+      <div class="card-chip"></div>
+      <div class="card-number-preview" id="preview-number">•••• •••• •••• ••••</div>
+      <div class="card-bottom">
+        <div>
+          <div class="card-holder-label">Card Holder</div>
+          <div class="card-holder-name" id="preview-name">FULL NAME</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="card-expiry-label">Expires</div>
+          <div class="card-expiry-val" id="preview-expiry">MM/YY</div>
+        </div>
+        <div class="card-network" id="preview-network">💳</div>
+      </div>
+    </div>
 
-    // --- Tab switching ---
-    const methodLabels = {
-      card: 'Credit Card',
-      gpay: 'Google Pay',
-      apay: 'Apple Pay',
-      cvs: 'Convenience Store'
-    };
+    <!-- Accepted cards -->
+    <div class="accepted-cards">
+      <span style="font-size:0.72rem;color:var(--text-muted);">利用可能:</span>
+      <span class="card-badge visa">VISA</span>
+      <span class="card-badge mc">Mastercard</span>
+      <span class="card-badge jcb">JCB</span>
+      <span class="card-badge amex">AMEX</span>
+    </div>
 
-    function switchTab(id, chipEl) {
-      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.pay-tab').forEach(c => c.classList.remove('active'));
-      document.getElementById('tab-' + id).classList.add('active');
-      chipEl.classList.add('active');
-      document.getElementById('summary-method').textContent = methodLabels[id];
+    <!-- Card number -->
+    <div class="form-group">
+      <label>カード番号 / Card Number <span class="required">*</span></label>
+      <input type="tel" id="card-number" inputmode="numeric" maxlength="19" placeholder="1234 5678 9012 3456"
+             oninput="formatCardNumber(this)" onkeyup="updatePreview()"/>
+    </div>
+
+    <!-- Name -->
+    <div class="form-group">
+      <label>カード名義 / Cardholder Name <span class="required">*</span></label>
+      <input type="text" id="card-name" placeholder="YAMADA TARO" oninput="updatePreview()" style="text-transform:uppercase;"/>
+    </div>
+
+    <!-- Expiry + CVV row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label>有効期限 / Expiry <span class="required">*</span></label>
+        <input type="tel" id="card-expiry" inputmode="numeric" maxlength="5" placeholder="MM/YY"
+               oninput="formatExpiry(this)" onkeyup="updatePreview()"/>
+      </div>
+      <div class="form-group">
+        <label>CVV <span class="required">*</span></label>
+        <input type="tel" id="card-cvv" inputmode="numeric" maxlength="4" placeholder="123"/>
+      </div>
+    </div>
+
+    <!-- Save card -->
+    <div class="checkbox-row">
+      <input type="checkbox" id="save-card"/>
+      <label for="save-card">このカードを保存する / Save this card for future use</label>
+    </div>
+  </div>
+
+  <!-- GOOGLE PAY TAB -->
+  <div id="panel-gpay" class="pay-panel">
+    <div class="wallet-pay-section">
+      <div style="font-size:3rem;margin:24px 0 12px;">G</div>
+      <button class="btn-gpay" onclick="confirmPayment()">
+        <span style="font-size:1.1rem;font-style:italic;font-weight:300;">G</span>
+        <span style="font-size:1rem;">oogle Pay</span>
+      </button>
+      <div class="security-note">🔒 Google の安全な決済システムを使用しています<br/>Secured by Google's encrypted payment system</div>
+    </div>
+  </div>
+
+  <!-- APPLE PAY TAB -->
+  <div id="panel-apay" class="pay-panel">
+    <div class="wallet-pay-section">
+      <div style="font-size:3rem;margin:24px 0 12px;"></div>
+      <button class="btn-apay" onclick="confirmPayment()">
+        <span style="font-size:1.2rem;"></span>
+        <span style="font-size:1rem;">Apple Pay</span>
+      </button>
+      <div class="security-note">🔐 Face ID / Touch ID で認証します<br/>Authenticate with Face ID or Touch ID</div>
+    </div>
+  </div>
+
+  <!-- CONVENIENCE STORE TAB -->
+  <div id="panel-cvs" class="pay-panel">
+    <div style="font-size:0.85rem;font-weight:600;margin-bottom:12px;">コンビニを選択してください / Select a store</div>
+    <div class="store-grid">
+      <div class="store-tile" onclick="selectStore(this, 'Lawson')">
+        <div class="store-icon">🏪</div>
+        <div class="store-name">Lawson</div>
+      </div>
+      <div class="store-tile" onclick="selectStore(this, 'FamilyMart')">
+        <div class="store-icon">🏬</div>
+        <div class="store-name">FamilyMart</div>
+      </div>
+      <div class="store-tile" onclick="selectStore(this, '7-Eleven')">
+        <div class="store-icon">🟢</div>
+        <div class="store-name">7-Eleven</div>
+      </div>
+      <div class="store-tile" onclick="selectStore(this, 'Ministop')">
+        <div class="store-icon">🏪</div>
+        <div class="store-name">Ministop</div>
+      </div>
+    </div>
+
+    <div id="cvs-code-section" style="display:none;">
+      <div class="payment-code-box">
+        <div class="payment-code-label">支払い番号 / Payment Code</div>
+        <div class="payment-code" id="cvs-code">2026-0617-XXXX-XXXX</div>
+      </div>
+      <div class="qr-placeholder">⬛</div>
+      <div class="alert alert-warning">
+        ⚠️ この支払い番号の有効期限は24時間です。期限内にお支払いください。<br/>
+        <span style="font-size:0.76rem;">This payment code expires in 24 hours. Please pay before the deadline.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Button -->
+  <div class="confirm-area">
+    <button class="btn btn-red" id="confirm-btn" onclick="confirmPayment()">
+      お支払いを確定する / Confirm Payment
+    </button>
+  </div>
+
+</div>
+
+<script src="../assets/nav.js"></script>
+<script>
+  injectNav('mypage');
+
+  /* ---- Tab switching ---- */
+  function showPayTab(id, el) {
+    document.querySelectorAll('.pay-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.pay-panel').forEach(function(p) { p.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  /* ---- Card number formatting ---- */
+  function formatCardNumber(input) {
+    var val = input.value.replace(/\D/g, '').slice(0, 16);
+    input.value = val.replace(/(.{4})/g, '$1 ').trim();
+    updatePreview();
+  }
+
+  /* ---- Expiry formatting ---- */
+  function formatExpiry(input) {
+    var val = input.value.replace(/\D/g, '').slice(0, 4);
+    if (val.length >= 3) {
+      input.value = val.slice(0, 2) + '/' + val.slice(2);
+    } else {
+      input.value = val;
     }
+    updatePreview();
+  }
 
-    // --- Card preview logic ---
-    function formatCardNumber(input) {
-      let v = input.value.replace(/\D/g, '').slice(0, 16);
-      const groups = v.match(/.{1,4}/g) || [];
-      input.value = groups.join(' ');
-      // Update preview
-      const raw = v.padEnd(16, '•');
-      const previewGroups = raw.match(/.{1,4}/g) || ['••••', '••••', '••••', '••••'];
-      document.getElementById('preview-number').textContent = previewGroups.join(' ');
-      // Detect network
-      const net = document.getElementById('preview-network');
-      if (v.startsWith('4')) net.textContent = 'VISA';
-      else if (v.startsWith('5') || v.startsWith('2')) net.textContent = 'MC';
-      else if (v.startsWith('35')) net.textContent = 'JCB';
-      else if (v.startsWith('3')) net.textContent = 'AMEX';
-      else net.textContent = '💳';
+  /* ---- Live preview update ---- */
+  function updatePreview() {
+    var num = document.getElementById('card-number').value || '';
+    var name = document.getElementById('card-name').value || '';
+    var exp  = document.getElementById('card-expiry').value || '';
+
+    // Number
+    var masked = num.replace(/\d(?=(\d|\s){5})/g, '•');
+    if (!num) masked = '•••• •••• •••• ••••';
+    document.getElementById('preview-number').textContent = masked;
+
+    // Name
+    document.getElementById('preview-name').textContent = (name.trim().toUpperCase() || 'FULL NAME');
+
+    // Expiry
+    document.getElementById('preview-expiry').textContent = exp || 'MM/YY';
+
+    // Network icon
+    var first = num.replace(/\s/g, '').charAt(0);
+    var net = { '4': '🔵 VISA', '5': '🔴 MC', '3': '🟢 AMEX', '': '💳' };
+    document.getElementById('preview-network').textContent = net[first] || '💳';
+  }
+
+  /* ---- Convenience store selection ---- */
+  function selectStore(tile, storeName) {
+    document.querySelectorAll('.store-tile').forEach(function(t) { t.classList.remove('selected'); });
+    tile.classList.add('selected');
+    // generate random code suffix
+    var rand = Math.floor(Math.random() * 9000 + 1000) + '-' + Math.floor(Math.random() * 9000 + 1000);
+    document.getElementById('cvs-code').textContent = '2026-0617-' + rand;
+    document.getElementById('cvs-code-section').style.display = 'block';
+    showToast(storeName + ' が選択されました', 'info');
+  }
+
+  /* ---- Confirm payment flow ---- */
+  function confirmPayment() {
+    var btn = document.getElementById('confirm-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>処理中... / Processing...';
+
+    setTimeout(function() {
+      // Navigate to wallet with success toast param
+      window.location.href = 'wallet.html?success=1';
+    }, 1500);
+  }
+
+  /* ---- Show success toast if redirected back from payment ---- */
+  window.addEventListener('load', function() {
+    if (window.location.search.indexOf('success=1') !== -1) {
+      showToast('購入完了！ / Purchase complete!', 'success');
+      // Clean URL
+      history.replaceState({}, '', window.location.pathname);
     }
-
-    function updatePreviewName(val) {
-      const name = val.toUpperCase().trim() || 'CARDHOLDER NAME';
-      document.getElementById('preview-name').textContent = name.slice(0, 22);
-    }
-
-    function formatExpiry(input) {
-      let v = input.value.replace(/\D/g, '').slice(0, 4);
-      if (v.length >= 3) {
-        v = v.slice(0, 2) + '/' + v.slice(2);
-      }
-      input.value = v;
-      const display = v || 'MM/YY';
-      document.getElementById('preview-expiry').textContent = display;
-    }
-
-    // --- Convenience store selection ---
-    let selectedStore = null;
-
-    function selectStore(el, storeName) {
-      document.querySelectorAll('.store-option').forEach(s => s.classList.remove('selected'));
-      el.classList.add('selected');
-      selectedStore = storeName;
-      // Show payment code
-      document.getElementById('cvs-code-box').classList.add('visible');
-      showToast('Payment code generated for ' + storeName, 'success');
-    }
-
-    // --- Wallet pay simulation ---
-    function handleWalletPay(method) {
-      showToast('Redirecting to ' + method + '...', 'info');
-      setTimeout(() => {
-        confirmPayment();
-      }, 1200);
-    }
-
-    // --- Confirm payment ---
-    function confirmPayment() {
-      const activeTab = document.querySelector('.tab-panel.active').id;
-
-      // Validate card fields if on card tab
-      if (activeTab === 'tab-card') {
-        const num = document.getElementById('card-number').value.replace(/\s/g, '');
-        const name = document.getElementById('card-name').value.trim();
-        const exp = document.getElementById('card-expiry').value;
-        const cvv = document.getElementById('card-cvv').value;
-        if (num.length < 13) { showToast('Please enter a valid card number', 'danger'); return; }
-        if (!name) { showToast('Please enter the cardholder name', 'danger'); return; }
-        if (exp.length < 5) { showToast('Please enter a valid expiry date', 'danger'); return; }
-        if (cvv.length < 3) { showToast('Please enter your CVV', 'danger'); return; }
-      }
-
-      if (activeTab === 'tab-cvs' && !selectedStore) {
-        showToast('Please select a convenience store', 'warning');
-        return;
-      }
-
-      // Disable button
-      const btn = document.getElementById('pay-btn');
-      btn.disabled = true;
-      btn.textContent = '⏳ Processing...';
-
-      showToast('Payment processing...', 'success');
-
-      setTimeout(() => {
-        showToast('Payment successful! Coins added to your wallet 🎉', 'success');
-        setTimeout(() => {
-          window.location.href = 'wallet.html';
-        }, 1500);
-      }, 1500);
-    }
-  </script>
+  });
+</script>
 </body>
 </html>
