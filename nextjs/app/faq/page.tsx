@@ -162,7 +162,7 @@ function FaqContent({ categories, activeCat, setActiveCat, cat, openId, setOpenI
           <h3 className="text-[14px] font-bold text-[#1A1A1A] mb-1">解決しない場合はサポートへ</h3>
           <p className="text-[12px] text-[#666] mb-4 leading-relaxed">
             上記で解決しない場合は、お気軽にカスタマーサポートまでお問い合わせください。<br />
-            <span className="text-[11px] text-[#999]">If your question wasn't answered, contact our customer support team.</span>
+            <span className="text-[11px] text-[#999]">If your question wasn&apos;t answered, contact our customer support team.</span>
           </p>
           <button className="w-full rounded-full bg-[#E8002D] py-3 text-[14px] font-bold text-white">
             お問い合わせ / Contact Support

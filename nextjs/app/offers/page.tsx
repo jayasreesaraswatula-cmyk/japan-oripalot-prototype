@@ -14,12 +14,20 @@ const OFFERS: Offer[] = [
   { id: "o4", coins: 10000, freeCoins: 2500, price: 7490, origPrice: 9990, discount: "25%OFF", color: "#0B7EC5" },
 ];
 
-function useCountdown(targetMs: number) {
-  const [remaining, setRemaining] = useState(Math.max(0, targetMs - Date.now()));
+const OFFER_DURATION_MS = 2 * 60 * 60 * 1000;
+
+function useCountdown(durationMs: number) {
+  const [remaining, setRemaining] = useState(durationMs);
+
   useEffect(() => {
-    const id = setInterval(() => setRemaining(Math.max(0, targetMs - Date.now())), 1000);
+    const targetMs = Date.now() + durationMs;
+    const updateRemaining = () => setRemaining(Math.max(0, targetMs - Date.now()));
+
+    updateRemaining();
+    const id = setInterval(updateRemaining, 1000);
     return () => clearInterval(id);
-  }, [targetMs]);
+  }, [durationMs]);
+
   const h = Math.floor(remaining / 3600000);
   const m = Math.floor((remaining % 3600000) / 60000);
   const s = Math.floor((remaining % 60000) / 1000);
@@ -30,9 +38,7 @@ function useCountdown(targetMs: number) {
 export default function OffersPage() {
   const [selected, setSelected] = useState<Offer | null>(null);
   const [bought, setBought]     = useState<Set<string>>(new Set());
-  // 2 hours from now
-  const target = Date.now() + 2 * 60 * 60 * 1000;
-  const countdown = useCountdown(target);
+  const countdown = useCountdown(OFFER_DURATION_MS);
 
   function confirm() {
     if (!selected) return;
